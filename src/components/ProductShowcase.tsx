@@ -8,30 +8,30 @@ const products = [
   {
     id: 1,
     image: product1,
-    name: "Chikankari Elegance",
-    price: "₹2,999",
-    description: "Hand-embroidered blood red kurta with traditional chikankari work"
+    name: "Heritage Warrior",
+    price: "₹3,299",
+    description: "Cream half kurta with bold warrior print - modern streetwear meets tradition"
   },
   {
     id: 2,
     image: product2,
-    name: "Pastel Dreams",
-    price: "₹2,599",
-    description: "Soft pink kurta with delicate floral embroidery"
+    name: "Street Icon",
+    price: "₹2,899",
+    description: "Black V-neck kurta with vibrant street art - perfect for urban explorers"
   },
   {
     id: 3,
     image: product3,
-    name: "Earthy Essence",
-    price: "₹2,799",
-    description: "Handwoven beige kurta with geometric patterns"
+    name: "Minimal Classic",
+    price: "₹2,599",
+    description: "Beige textured kurta with clean lines - effortless everyday elegance"
   },
   {
     id: 4,
     image: product4,
-    name: "Midnight Navy",
-    price: "₹2,699",
-    description: "Deep navy kurta with minimal contemporary embroidery"
+    name: "Botanical Dreams",
+    price: "₹2,999",
+    description: "Natural cotton kurta with hand-embroidered botanical patterns"
   }
 ];
 
