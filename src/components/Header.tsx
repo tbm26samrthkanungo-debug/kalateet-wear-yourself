@@ -1,47 +1,47 @@
 import { useState } from "react";
-import { Menu, X, ShoppingBag } from "lucide-react";
+import { Menu, X, ShoppingBag, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import kalateeLogo from "@/assets/kalateet-logo.png";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border shadow-soft">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border">
+      <div className="container mx-auto px-6 lg:px-8">
+        <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <h1 className="text-2xl font-crimson font-semibold text-foreground">
-              Kalateet
-            </h1>
+            <img
+              src={kalateeLogo}
+              alt="Kalateet"
+              className="h-12 w-auto"
+            />
           </div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            <a href="#home" className="text-foreground hover:text-primary transition-smooth">
-              Home
+          {/* Desktop Navigation - Centered */}
+          <nav className="hidden md:flex items-center space-x-12 absolute left-1/2 transform -translate-x-1/2">
+            <a href="#home" className="text-sm uppercase tracking-wider text-foreground hover:text-primary transition-smooth font-medium">
+              New In
             </a>
-            <a href="#about" className="text-foreground hover:text-primary transition-smooth">
-              About
+            <a href="#products" className="text-sm uppercase tracking-wider text-foreground hover:text-primary transition-smooth font-medium">
+              Apparel
             </a>
-            <a href="#products" className="text-foreground hover:text-primary transition-smooth">
-              Products
-            </a>
-            <a href="#philosophy" className="text-foreground hover:text-primary transition-smooth">
-              Philosophy
-            </a>
-            <a href="#stories" className="text-foreground hover:text-primary transition-smooth">
+            <a href="#about" className="text-sm uppercase tracking-wider text-foreground hover:text-primary transition-smooth font-medium">
               Stories
             </a>
           </nav>
 
           {/* Desktop Actions */}
-          <div className="hidden md:flex items-center space-x-4">
-            <Button variant="ghost" size="icon">
+          <div className="hidden md:flex items-center space-x-6">
+            <button className="text-sm uppercase tracking-wider text-foreground hover:text-primary transition-smooth font-medium">
+              Search
+            </button>
+            <button className="text-sm uppercase tracking-wider text-foreground hover:text-primary transition-smooth font-medium">
+              Login
+            </button>
+            <Button variant="ghost" size="icon" className="relative">
               <ShoppingBag className="h-5 w-5" />
-            </Button>
-            <Button variant="hero" size="sm">
-              Shop Now
             </Button>
           </div>
 
