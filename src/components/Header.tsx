@@ -2,12 +2,18 @@ import { useState } from "react";
 import { Menu, X, ShoppingBag, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import kalateeLogo from "@/assets/kalateet-logo.png";
+import { smoothScrollToSection } from "@/lib/scrollUtils";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  const handleNavClick = (sectionId: string) => {
+    smoothScrollToSection(sectionId);
+    setIsMenuOpen(false);
+  };
+
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border shadow-sm">
       <div className="container mx-auto px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
@@ -21,15 +27,30 @@ const Header = () => {
 
           {/* Desktop Navigation - Centered */}
           <nav className="hidden md:flex items-center space-x-12 absolute left-1/2 transform -translate-x-1/2">
-            <a href="#home" className="text-sm uppercase tracking-wider text-foreground hover:text-primary transition-smooth font-medium">
-              New In
-            </a>
-            <a href="#products" className="text-sm uppercase tracking-wider text-foreground hover:text-primary transition-smooth font-medium">
-              Apparel
-            </a>
-            <a href="#about" className="text-sm uppercase tracking-wider text-foreground hover:text-primary transition-smooth font-medium">
-              Stories
-            </a>
+            <button 
+              onClick={() => handleNavClick('products')}
+              className="text-sm uppercase tracking-wider text-foreground hover:text-primary transition-smooth font-medium"
+            >
+              Collection
+            </button>
+            <button 
+              onClick={() => handleNavClick('about')}
+              className="text-sm uppercase tracking-wider text-foreground hover:text-primary transition-smooth font-medium"
+            >
+              About
+            </button>
+            <button 
+              onClick={() => handleNavClick('philosophy')}
+              className="text-sm uppercase tracking-wider text-foreground hover:text-primary transition-smooth font-medium"
+            >
+              Craft
+            </button>
+            <button 
+              onClick={() => handleNavClick('contact')}
+              className="text-sm uppercase tracking-wider text-foreground hover:text-primary transition-smooth font-medium"
+            >
+              Contact
+            </button>
           </nav>
 
           {/* Desktop Actions */}
@@ -61,46 +82,30 @@ const Header = () => {
         {isMenuOpen && (
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 bg-background border-t border-border shadow-medium">
-              <a
-                href="#home"
-                className="block px-3 py-2 text-foreground hover:text-primary transition-smooth"
-                onClick={() => setIsMenuOpen(false)}
+              <button
+                onClick={() => handleNavClick('products')}
+                className="block w-full text-left px-3 py-2 text-foreground hover:text-primary transition-smooth"
               >
-                Home
-              </a>
-              <a
-                href="#about"
-                className="block px-3 py-2 text-foreground hover:text-primary transition-smooth"
-                onClick={() => setIsMenuOpen(false)}
+                Collection
+              </button>
+              <button
+                onClick={() => handleNavClick('about')}
+                className="block w-full text-left px-3 py-2 text-foreground hover:text-primary transition-smooth"
               >
                 About
-              </a>
-              <a
-                href="#products"
-                className="block px-3 py-2 text-foreground hover:text-primary transition-smooth"
-                onClick={() => setIsMenuOpen(false)}
+              </button>
+              <button
+                onClick={() => handleNavClick('philosophy')}
+                className="block w-full text-left px-3 py-2 text-foreground hover:text-primary transition-smooth"
               >
-                Products
-              </a>
-              <a
-                href="#philosophy"
-                className="block px-3 py-2 text-foreground hover:text-primary transition-smooth"
-                onClick={() => setIsMenuOpen(false)}
+                Craft
+              </button>
+              <button
+                onClick={() => handleNavClick('contact')}
+                className="block w-full text-left px-3 py-2 text-foreground hover:text-primary transition-smooth"
               >
-                Philosophy
-              </a>
-              <a
-                href="#stories"
-                className="block px-3 py-2 text-foreground hover:text-primary transition-smooth"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Stories
-              </a>
-              <div className="px-3 py-2 space-y-2">
-                <Button variant="hero" size="sm" className="w-full">
-                  Shop Now
-                </Button>
-              </div>
+                Contact
+              </button>
             </div>
           </div>
         )}

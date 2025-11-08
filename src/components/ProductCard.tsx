@@ -1,19 +1,34 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 interface ProductCardProps {
+  id: number;
   image: string;
   name: string;
   price: string;
   description: string;
+  fabric: string;
+  onQuickView: () => void;
 }
 
-const ProductCard = ({ image, name, price, description }: ProductCardProps) => {
+const ProductCard = ({ id, image, name, price, description, onQuickView }: ProductCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
+  const navigate = useNavigate();
+
+  const handleClick = (e: React.MouseEvent) => {
+    // Check if ctrl/cmd key is pressed
+    if (e.ctrlKey || e.metaKey) {
+      window.open(`/product/${id}`, '_blank');
+    } else {
+      onQuickView();
+    }
+  };
 
   return (
     <div
       className="group cursor-pointer"
+      onClick={handleClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

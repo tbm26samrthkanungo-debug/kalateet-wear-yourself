@@ -1,4 +1,6 @@
+import { useState } from "react";
 import ProductCard from "./ProductCard";
+import ProductQuickView from "./ProductQuickView";
 import product1 from "@/assets/product-1.jpg";
 import product2 from "@/assets/product-2.jpg";
 import product3 from "@/assets/product-3.jpg";
@@ -10,32 +12,44 @@ const products = [
     image: product1,
     name: "Oversize Red",
     price: "₹3,299",
-    description: "Deep maroon half kurta with V-neck - timeless elegance meets comfort"
+    description: "Deep maroon half kurta with V-neck - timeless elegance meets comfort",
+    fabric: "Premium cotton blend with natural breathability. Machine wash cold, tumble dry low."
   },
   {
     id: 2,
     image: product2,
     name: "Olive Green Floral",
     price: "₹3,899",
-    description: "Botanical print kurta with mandarin collar - nature's artistry woven in fabric"
+    description: "Botanical print kurta with mandarin collar - nature's artistry woven in fabric",
+    fabric: "Soft cotton with botanical print. Hand wash recommended, dry in shade."
   },
   {
     id: 3,
     image: product3,
     name: "Oversize Off-White",
     price: "₹2,999",
-    description: "Textured beige kurta with collared V-neck - understated sophistication"
+    description: "Textured beige kurta with collared V-neck - understated sophistication",
+    fabric: "Textured cotton weave for enhanced comfort. Machine wash cold, iron on low heat."
   },
   {
     id: 4,
     image: product4,
     name: "Light Chinese Blue",
     price: "₹3,199",
-    description: "Striped kurta with mandarin collar - classic patterns, modern comfort"
+    description: "Striped kurta with mandarin collar - classic patterns, modern comfort",
+    fabric: "Cotton blend with vertical stripes. Machine washable, dry flat for best results."
   }
 ];
 
 const ProductShowcase = () => {
+  const [selectedProduct, setSelectedProduct] = useState<typeof products[0] | null>(null);
+  const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
+
+  const handleQuickView = (product: typeof products[0]) => {
+    setSelectedProduct(product);
+    setIsQuickViewOpen(true);
+  };
+
   return (
     <section id="products" className="py-24 lg:py-32 bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -71,13 +85,25 @@ const ProductShowcase = () => {
           {products.map((product) => (
             <ProductCard
               key={product.id}
+              id={product.id}
               image={product.image}
               name={product.name}
               price={product.price}
               description={product.description}
+              fabric={product.fabric}
+              onQuickView={() => handleQuickView(product)}
             />
           ))}
         </div>
+
+        {/* Quick View Modal */}
+        {selectedProduct && (
+          <ProductQuickView
+            isOpen={isQuickViewOpen}
+            onClose={() => setIsQuickViewOpen(false)}
+            product={selectedProduct}
+          />
+        )}
 
         <div className="text-center mt-16">
           <button className="text-accent hover:text-accent/80 font-normal text-base transition-gentle underline-offset-4 hover:underline tracking-wide">

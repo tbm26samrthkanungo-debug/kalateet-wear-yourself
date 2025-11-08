@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import kalateeLogo from "@/assets/kalateet-logo.png";
+import { smoothScrollToSection } from "@/lib/scrollUtils";
 
 const HeroSection = () => {
   return (
@@ -42,13 +43,22 @@ const HeroSection = () => {
               Choose fabric, not trends.
             </p>
             
-            <div className="mt-12">
+            <div className="mt-12 flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
                 variant="default" 
                 size="lg" 
+                onClick={() => smoothScrollToSection('products')}
                 className="bg-cream text-primary hover:bg-cream/90 font-normal px-12 py-6 rounded-sm transition-gentle shadow-medium hover:shadow-large"
               >
                 Explore Collection
+              </Button>
+              <Button 
+                variant="outline" 
+                size="lg"
+                onClick={() => smoothScrollToSection('about')}
+                className="border-cream text-cream hover:bg-cream/10 font-light px-12 py-6 rounded-sm transition-gentle"
+              >
+                Learn More
               </Button>
             </div>
           </div>
