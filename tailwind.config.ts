@@ -44,15 +44,11 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        earth: {
-          warm: "hsl(var(--earth-warm))",
-          deep: "hsl(var(--earth-deep))",
-        },
-        sage: "hsl(var(--sage))",
+        cream: "hsl(var(--cream))",
+        "primary-light": "hsl(var(--primary-light))",
       },
       fontFamily: {
-        crimson: ['Crimson Pro', 'serif'],
-        inter: ['Inter', 'sans-serif'],
+        sanchez: ['Sanchez', 'serif'],
       },
       borderRadius: {
         lg: "var(--radius)",

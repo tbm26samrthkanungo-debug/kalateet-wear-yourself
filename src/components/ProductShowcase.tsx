@@ -8,66 +8,66 @@ const products = [
   {
     id: 1,
     image: product1,
-    name: "Heritage Warrior",
+    name: "Oversize Red",
     price: "₹3,299",
-    description: "Cream half kurta with bold warrior print - modern streetwear meets tradition"
+    description: "Deep maroon half kurta with V-neck - timeless elegance meets comfort"
   },
   {
     id: 2,
     image: product2,
-    name: "Street Icon",
-    price: "₹2,899",
-    description: "Black V-neck kurta with vibrant street art - perfect for urban explorers"
+    name: "Olive Green Floral",
+    price: "₹3,899",
+    description: "Botanical print kurta with mandarin collar - nature's artistry woven in fabric"
   },
   {
     id: 3,
     image: product3,
-    name: "Minimal Classic",
-    price: "₹2,599",
-    description: "Beige textured kurta with clean lines - effortless everyday elegance"
+    name: "Oversize Off-White",
+    price: "₹2,999",
+    description: "Textured beige kurta with collared V-neck - understated sophistication"
   },
   {
     id: 4,
     image: product4,
-    name: "Botanical Dreams",
-    price: "₹2,999",
-    description: "Natural cotton kurta with hand-embroidered botanical patterns"
+    name: "Light Chinese Blue",
+    price: "₹3,199",
+    description: "Striped kurta with mandarin collar - classic patterns, modern comfort"
   }
 ];
 
 const ProductShowcase = () => {
   return (
-    <section id="products" className="py-20 lg:py-32">
+    <section id="products" className="py-24 lg:py-32 bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl lg:text-5xl font-crimson font-semibold text-foreground mb-6">
+        <div className="text-center mb-20">
+          <h2 className="text-4xl lg:text-5xl font-normal text-foreground mb-6 tracking-wide">
             Our Collection
           </h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed font-light">
             Each piece is thoughtfully crafted to blend traditional Indian artistry 
             with modern everyday comfort.
           </p>
-          <div className="w-24 h-1 bg-primary mx-auto rounded-full mt-6" />
+          <div className="w-20 h-0.5 bg-accent mx-auto mt-8" />
         </div>
 
         {/* Filter Buttons */}
-        <div className="flex flex-wrap justify-center gap-4 mb-12">
-          <button className="px-6 py-2 rounded-full border border-primary bg-primary text-primary-foreground shadow-soft transition-smooth">
+        <div className="flex flex-wrap justify-center gap-3 mb-16">
+          <button className="px-8 py-2.5 rounded-sm border border-primary bg-primary text-primary-foreground shadow-soft transition-gentle font-light tracking-wide">
             All
           </button>
-          <button className="px-6 py-2 rounded-full border border-border bg-background text-foreground hover:bg-muted transition-smooth">
+          <button className="px-8 py-2.5 rounded-sm border border-border bg-background text-foreground hover:border-accent hover:text-accent transition-gentle font-light tracking-wide">
             Chikankari
           </button>
-          <button className="px-6 py-2 rounded-full border border-border bg-background text-foreground hover:bg-muted transition-smooth">
+          <button className="px-8 py-2.5 rounded-sm border border-border bg-background text-foreground hover:border-accent hover:text-accent transition-gentle font-light tracking-wide">
             Block Print
           </button>
-          <button className="px-6 py-2 rounded-full border border-border bg-background text-foreground hover:bg-muted transition-smooth">
+          <button className="px-8 py-2.5 rounded-sm border border-border bg-background text-foreground hover:border-accent hover:text-accent transition-gentle font-light tracking-wide">
             Embroidered
           </button>
         </div>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           {products.map((product) => (
             <ProductCard
               key={product.id}
@@ -79,8 +79,8 @@ const ProductShowcase = () => {
           ))}
         </div>
 
-        <div className="text-center mt-12">
-          <button className="text-primary hover:text-primary/80 font-medium text-lg transition-smooth underline-offset-4 hover:underline">
+        <div className="text-center mt-16">
+          <button className="text-accent hover:text-accent/80 font-normal text-base transition-gentle underline-offset-4 hover:underline tracking-wide">
             View All Products →
           </button>
         </div>

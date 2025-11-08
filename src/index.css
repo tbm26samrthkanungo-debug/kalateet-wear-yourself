@@ -8,56 +8,53 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Brand Colors */
-    --background: 0 0% 100%;
-    --foreground: 20 14% 12%;
+    /* Kalateet Color Palette */
+    --background: 40 14% 98%; /* Off-white #FAF9F7 */
+    --foreground: 15 55% 8%; /* Deep brown-black #1A0F0A */
     
-    /* Blood Red Primary */
-    --primary: 0 85% 45%;
-    --primary-foreground: 0 0% 100%;
-    --primary-muted: 0 85% 94%;
+    /* Deep Maroon Primary */
+    --primary: 0 85% 22%; /* Deep maroon #6E0E0E */
+    --primary-foreground: 30 20% 92%; /* Cream #F4E4D7 */
+    --primary-light: 12 42% 77%; /* Lighter maroon for gradient #E5C9C5 */
     
-    /* Earthy Neutrals */
-    --secondary: 35 20% 85%;
-    --secondary-foreground: 20 14% 12%;
+    /* Warm Ochre Accent */
+    --accent: 30 55% 50%; /* Warm ochre #C47F3A */
+    --accent-foreground: 15 55% 8%;
     
-    /* Soft Pastels */
-    --accent: 340 35% 88%;
-    --accent-foreground: 20 14% 12%;
+    /* Neutrals */
+    --secondary: 40 14% 95%;
+    --secondary-foreground: 15 55% 8%;
     
-    /* Neutral System */
-    --muted: 20 8% 96%;
-    --muted-foreground: 20 12% 45%;
+    --muted: 40 14% 96%;
+    --muted-foreground: 20 8% 45%;
     
     --card: 0 0% 100%;
-    --card-foreground: 20 14% 12%;
+    --card-foreground: 15 55% 8%;
     
     --popover: 0 0% 100%;
-    --popover-foreground: 20 14% 12%;
+    --popover-foreground: 15 55% 8%;
     
-    --border: 20 8% 90%;
-    --input: 20 8% 90%;
-    --ring: 0 85% 45%;
+    --border: 30 12% 88%;
+    --input: 30 12% 88%;
+    --ring: 0 85% 22%;
     
-    /* Earthy Tones */
-    --earth-warm: 35 40% 75%;
-    --earth-deep: 25 30% 25%;
-    --sage: 95 25% 80%;
+    /* Decorative */
+    --cream: 30 20% 92%; /* Cream #F4E4D7 */
     
     /* Premium Shadows & Effects */
-    --shadow-soft: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-    --shadow-medium: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-soft: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05);
+    --shadow-medium: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.08);
     --shadow-large: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
     
     /* Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--muted)) 100%);
-    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(0 85% 55%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(0 85% 22%) 0%, hsl(12 42% 77%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(0 85% 22%) 0%, hsl(12 42% 77%) 100%);
     
     /* Transitions */
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --transition-smooth: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --transition-gentle: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     
-    --radius: 0.75rem;
+    --radius: 0.5rem;
   }
 
   .dark {
@@ -105,7 +102,9 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground font-inter antialiased;
+    @apply bg-background text-foreground font-sanchez antialiased;
+    letter-spacing: 0.01em;
+    line-height: 1.7;
   }
   
   html {
@@ -114,12 +113,8 @@ All colors MUST be HSL.
 }
 
 @layer utilities {
-  .font-crimson {
-    font-family: 'Crimson Pro', serif;
-  }
-  
-  .font-inter {
-    font-family: 'Inter', sans-serif;
+  .font-sanchez {
+    font-family: 'Sanchez', serif;
   }
   
   .shadow-soft {
@@ -138,8 +133,8 @@ All colors MUST be HSL.
     transition: var(--transition-smooth);
   }
   
-  .transition-bounce {
-    transition: var(--transition-bounce);
+  .transition-gentle {
+    transition: var(--transition-gentle);
   }
   
   .gradient-hero {
