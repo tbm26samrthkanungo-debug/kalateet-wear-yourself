@@ -29,7 +29,7 @@ const HeroSection = () => {
               <img
                 src={kalateeLogo}
                 alt="Kalateet - A Doorway to Yourself"
-                className="h-24 sm:h-32 lg:h-40 w-auto mx-auto opacity-90"
+                className="h-24 sm:h-32 lg:h-40 w-auto mx-auto opacity-90 brightness-0 invert"
               />
             </div>
             
