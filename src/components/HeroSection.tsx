@@ -48,7 +48,7 @@ const HeroSection = () => {
                 variant="default" 
                 size="lg" 
                 onClick={() => smoothScrollToSection('products')}
-                className="bg-cream text-primary hover:bg-cream/90 font-normal px-12 py-6 rounded-sm transition-gentle shadow-medium hover:shadow-large"
+                className="bg-cream text-primary font-normal px-12 py-6 rounded-sm transition-gentle shadow-medium hover:shadow-large hover:bg-transparent hover:text-white hover:border-white border border-transparent"
               >
                 Explore Collection
               </Button>
@@ -56,9 +56,9 @@ const HeroSection = () => {
                 variant="outline" 
                 size="lg"
                 onClick={() => smoothScrollToSection('about')}
-                className="border-cream text-cream hover:bg-cream/10 font-light px-12 py-6 rounded-sm transition-gentle"
+                className="border-cream text-cream font-light px-12 py-6 rounded-sm transition-gentle hover:bg-transparent hover:text-white hover:border-white"
               >
-                Learn More
+                About Us
               </Button>
             </div>
           </div>
