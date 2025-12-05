@@ -1,18 +1,23 @@
-interface MosaicImage {
-  id: number;
-  placeholder: string; // Will be replaced with actual images later
-}
+import mosaic1 from "@/assets/mosaic-1.jpg";
+import mosaic2 from "@/assets/mosaic-2.jpg";
+import mosaic3 from "@/assets/mosaic-3.jpg";
+import mosaic4 from "@/assets/mosaic-4.jpg";
+import mosaic5 from "@/assets/mosaic-5.jpg";
+import mosaic6 from "@/assets/mosaic-6.jpg";
+import mosaic7 from "@/assets/mosaic-7.jpg";
+import mosaic8 from "@/assets/mosaic-8.jpg";
+import mosaic9 from "@/assets/mosaic-9.jpg";
 
-const mosaicImages: MosaicImage[] = [
-  { id: 1, placeholder: "bg-gradient-to-br from-secondary to-accent/40" },
-  { id: 2, placeholder: "bg-gradient-to-br from-accent/30 to-secondary" },
-  { id: 3, placeholder: "bg-gradient-to-br from-secondary to-primary/20" },
-  { id: 4, placeholder: "bg-gradient-to-br from-primary/20 to-accent/40" },
-  { id: 5, placeholder: "bg-gradient-to-br from-accent/40 to-secondary" },
-  { id: 6, placeholder: "bg-gradient-to-br from-secondary to-accent/30" },
-  { id: 7, placeholder: "bg-gradient-to-br from-accent/30 to-primary/20" },
-  { id: 8, placeholder: "bg-gradient-to-br from-primary/20 to-secondary" },
-  { id: 9, placeholder: "bg-gradient-to-br from-secondary to-accent/40" },
+const mosaicImages = [
+  mosaic1,
+  mosaic2,
+  mosaic3,
+  mosaic4,
+  mosaic5,
+  mosaic6,
+  mosaic7,
+  mosaic8,
+  mosaic9,
 ];
 
 const AboutSection = () => {
@@ -51,18 +56,22 @@ const AboutSection = () => {
             {/* Brand Mosaic - 3x3 Grid */}
             <div className="relative">
               <div className="grid grid-cols-3 gap-2 rounded-2xl overflow-hidden shadow-large">
-                {mosaicImages.map((image) => (
+                {mosaicImages.map((image, index) => (
                   <div
-                    key={image.id}
-                    className={`aspect-square ${image.placeholder}`}
+                    key={index}
+                    className="aspect-square overflow-hidden"
                   >
-                    {/* Placeholder for future images */}
+                    <img 
+                      src={image} 
+                      alt={`Kalateet brand mosaic ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                 ))}
                 
-                {/* Overlay Text */}
-                <div className="absolute inset-0 flex items-center justify-center bg-foreground/20">
-                  <div className="text-center text-white">
+                {/* Overlay with subtle dark background for readability */}
+                <div className="absolute inset-0 flex items-center justify-center bg-foreground/5">
+                  <div className="text-center text-white drop-shadow-lg">
                     <div className="text-6xl font-bold mb-2">K</div>
                     <div className="text-xl font-medium">Kalateet</div>
                     <div className="text-sm opacity-80">Est. 2024</div>
