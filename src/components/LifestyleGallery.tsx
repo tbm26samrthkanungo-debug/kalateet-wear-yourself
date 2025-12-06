@@ -1,9 +1,13 @@
+import story1 from "@/assets/story-1.jpg";
+import story2 from "@/assets/story-2.jpg";
+import story3 from "@/assets/story-3.jpg";
+import story4 from "@/assets/story-4.jpg";
+
 interface LifestyleStory {
   id: number;
   scenario: string;
   description: string;
-  image?: string; // Will be replaced with actual customer photos
-  placeholderStyle: string;
+  image: string;
 }
 
 const lifestyleStories: LifestyleStory[] = [
@@ -11,25 +15,25 @@ const lifestyleStories: LifestyleStory[] = [
     id: 1,
     scenario: "College Campus",
     description: "Paired with jeans and sneakers for that perfect campus look",
-    placeholderStyle: "bg-gradient-to-br from-secondary to-accent"
+    image: story1
   },
   {
     id: 2,
     scenario: "Coffee Date",
     description: "Effortlessly stylish for casual meetups and conversations",
-    placeholderStyle: "bg-gradient-to-br from-accent to-secondary"
+    image: story2
   },
   {
     id: 3,
     scenario: "Work from Home",
     description: "Comfortable yet professional for virtual meetings",
-    placeholderStyle: "bg-gradient-to-br from-secondary to-primary/30"
+    image: story3
   },
   {
     id: 4,
     scenario: "Weekend Concert",
     description: "Stand out in the crowd with authentic Indian street style",
-    placeholderStyle: "bg-gradient-to-br from-primary/30 to-accent"
+    image: story4
   }
 ];
 
@@ -55,18 +59,16 @@ const LifestyleGallery = () => {
               className="group cursor-pointer"
             >
               <div className="relative overflow-hidden rounded-2xl shadow-medium hover:shadow-large transition-smooth">
-                <div className={`aspect-[4/5] relative ${story.image ? '' : story.placeholderStyle}`}>
-                  {/* Customer photo or placeholder */}
-                  {story.image ? (
-                    <img 
-                      src={story.image} 
-                      alt={story.scenario}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : null}
+                <div className="aspect-[4/5] relative">
+                  {/* Customer photo */}
+                  <img 
+                    src={story.image} 
+                    alt={story.scenario}
+                    className="w-full h-full object-cover"
+                  />
                   
-                  {/* Gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                  {/* Gradient overlay for text readability */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
                   
                   {/* Content */}
                   <div className="absolute bottom-6 left-6 right-6">
