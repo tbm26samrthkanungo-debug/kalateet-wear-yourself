@@ -1,6 +1,8 @@
 import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
+import { useCart } from "@/hooks/useCart";
+import { useWishlist } from "@/hooks/useWishlist";
 
 interface ProductQuickViewProps {
   isOpen: boolean;
@@ -16,6 +18,19 @@ interface ProductQuickViewProps {
 }
 
 const ProductQuickView = ({ isOpen, onClose, product }: ProductQuickViewProps) => {
+  const { addToCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
+
+  const handleAddToCart = async () => {
+    await addToCart(product.id.toString());
+  };
+
+  const handleToggleWishlist = async () => {
+    await toggleWishlist(product.id.toString());
+  };
+
+  const inWishlist = isInWishlist(product.id.toString());
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogOverlay className="bg-black/60 backdrop-blur-sm" />
@@ -70,6 +85,7 @@ const ProductQuickView = ({ isOpen, onClose, product }: ProductQuickViewProps) =
               <Button
                 variant="default"
                 size="lg"
+                onClick={handleAddToCart}
                 className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90 font-normal tracking-wide"
               >
                 Add to Cart
@@ -77,9 +93,14 @@ const ProductQuickView = ({ isOpen, onClose, product }: ProductQuickViewProps) =
               <Button
                 variant="outline"
                 size="lg"
-                className="flex-1 border-border text-foreground hover:bg-muted font-light tracking-wide"
+                onClick={handleToggleWishlist}
+                className={`flex-1 font-light tracking-wide ${
+                  inWishlist 
+                    ? "border-accent text-accent hover:bg-accent/10" 
+                    : "border-border text-foreground hover:bg-muted"
+                }`}
               >
-                Add to Lookbook
+                {inWishlist ? "In Lookbook ♥" : "Add to Lookbook"}
               </Button>
             </div>
           </div>

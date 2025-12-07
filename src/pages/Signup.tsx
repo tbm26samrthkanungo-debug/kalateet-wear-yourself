@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,53 +8,54 @@ import Footer from "@/components/Footer";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
 
-const Login = () => {
+const Signup = () => {
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { signIn, signInWithGoogle, signInWithApple, user } = useAuth();
+  const { signUp, signInWithGoogle, signInWithApple } = useAuth();
 
-  useEffect(() => {
-    if (user) {
-      navigate("/collection");
-    }
-  }, [user, navigate]);
-
-  const handleSignIn = async (e: React.FormEvent) => {
+  const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
-    const { error: signInError } = await signIn(email, password);
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters");
+      setLoading(false);
+      return;
+    }
+
+    const { error: signUpError } = await signUp(email, password, fullName);
     
-    if (signInError) {
-      if (signInError.message.includes("Invalid login credentials")) {
-        setError("Invalid email or password. Please try again.");
+    if (signUpError) {
+      if (signUpError.message.includes("already registered")) {
+        setError("An account with this email already exists. Please sign in.");
       } else {
-        setError(signInError.message);
+        setError(signUpError.message);
       }
       setLoading(false);
       return;
     }
 
     toast({
-      title: "Welcome back!",
-      description: "Signed in successfully. Redirecting..."
+      title: "Account created!",
+      description: "Welcome to Kalateet. Redirecting to collection..."
     });
     navigate("/collection");
     setLoading(false);
   };
 
-  const handleGoogleSignIn = async () => {
+  const handleGoogleSignUp = async () => {
     const { error } = await signInWithGoogle();
     if (error) {
       setError(error.message);
     }
   };
 
-  const handleAppleSignIn = async () => {
+  const handleAppleSignUp = async () => {
     const { error } = await signInWithApple();
     if (error) {
       setError(error.message);
@@ -69,10 +70,10 @@ const Login = () => {
           <div className="bg-card rounded-2xl shadow-large p-8 sm:p-10">
             <div className="text-center mb-8">
               <h1 className="text-3xl font-semibold text-foreground mb-2">
-                Welcome Back
+                Create Account
               </h1>
               <p className="text-muted-foreground">
-                Sign in to your Kalateet account
+                Join the Kalateet community
               </p>
             </div>
 
@@ -82,7 +83,21 @@ const Login = () => {
               </div>
             )}
 
-            <form onSubmit={handleSignIn} className="space-y-6">
+            <form onSubmit={handleSignUp} className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="fullName" className="text-foreground">
+                  Full Name
+                </Label>
+                <Input
+                  id="fullName"
+                  type="text"
+                  placeholder="Your full name"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className="h-12 rounded-lg border-border focus:border-primary"
+                />
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-foreground">
                   Email Address
@@ -111,15 +126,9 @@ const Login = () => {
                   className="h-12 rounded-lg border-border focus:border-primary"
                   required
                 />
-              </div>
-
-              <div className="text-right">
-                <Link 
-                  to="/forgot-password" 
-                  className="text-sm text-primary hover:text-primary/80 transition-smooth"
-                >
-                  Forgot password?
-                </Link>
+                <p className="text-xs text-muted-foreground">
+                  Must be at least 6 characters
+                </p>
               </div>
 
               <Button
@@ -127,7 +136,7 @@ const Login = () => {
                 disabled={loading}
                 className="w-full h-12 bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg font-medium transition-smooth"
               >
-                {loading ? "Signing in..." : "Sign In"}
+                {loading ? "Creating account..." : "Create Account"}
               </Button>
             </form>
 
@@ -146,7 +155,7 @@ const Login = () => {
               <Button
                 type="button"
                 variant="outline"
-                onClick={handleGoogleSignIn}
+                onClick={handleGoogleSignUp}
                 className="w-full h-12 rounded-lg border-border hover:bg-muted transition-smooth"
               >
                 <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
@@ -173,7 +182,7 @@ const Login = () => {
               <Button
                 type="button"
                 variant="outline"
-                onClick={handleAppleSignIn}
+                onClick={handleAppleSignUp}
                 className="w-full h-12 rounded-lg border-border hover:bg-muted transition-smooth"
               >
                 <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24" fill="currentColor">
@@ -184,12 +193,12 @@ const Login = () => {
             </div>
 
             <p className="text-center mt-8 text-muted-foreground">
-              Don't have an account?{" "}
+              Already have an account?{" "}
               <Link 
-                to="/signup" 
+                to="/login" 
                 className="text-primary hover:text-primary/80 font-medium transition-smooth"
               >
-                Create Account
+                Sign In
               </Link>
             </p>
           </div>
@@ -200,4 +209,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;
