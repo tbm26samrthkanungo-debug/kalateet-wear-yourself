@@ -1,46 +1,21 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Trash2, Plus, Minus } from "lucide-react";
+import { Trash2, Plus, Minus, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import product1 from "@/assets/product-1.jpg";
-import product2 from "@/assets/product-2.jpg";
-
-interface CartItem {
-  id: number;
-  image: string;
-  name: string;
-  price: number;
-  quantity: number;
-}
+import { useCart } from "@/hooks/useCart";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Cart = () => {
-  const [cartItems, setCartItems] = useState<CartItem[]>([
-    { id: 1, image: product1, name: "Oversize Red", price: 3299, quantity: 1 },
-    { id: 2, image: product2, name: "Olive Green Floral", price: 3899, quantity: 2 },
-  ]);
+  const { user } = useAuth();
+  const { cartItems, loading, updateQuantity, removeFromCart } = useCart();
   const [promoCode, setPromoCode] = useState("");
   const [discount, setDiscount] = useState(0);
 
-  const updateQuantity = (id: number, delta: number) => {
-    setCartItems(items =>
-      items.map(item =>
-        item.id === id
-          ? { ...item, quantity: Math.max(1, item.quantity + delta) }
-          : item
-      )
-    );
-  };
-
-  const removeItem = (id: number) => {
-    setCartItems(items => items.filter(item => item.id !== id));
-  };
-
   const handlePromoSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Mock promo code logic
     if (promoCode.toUpperCase() === "KALATEET10") {
       setDiscount(10);
     } else {
@@ -48,9 +23,48 @@ const Cart = () => {
     }
   };
 
-  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const subtotal = cartItems.reduce(
+    (sum, item) => sum + (item.product?.price_inr || 0) * item.quantity,
+    0
+  );
   const discountAmount = (subtotal * discount) / 100;
   const total = subtotal - discountAmount;
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 pt-28 pb-16 px-4 bg-background">
+          <div className="container mx-auto max-w-6xl text-center py-20">
+            <h1 className="text-3xl lg:text-4xl font-semibold text-foreground mb-6">
+              My Cart
+            </h1>
+            <p className="text-muted-foreground text-lg mb-6">
+              Please sign in to view your cart
+            </p>
+            <Link to="/login">
+              <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
+                Sign In
+              </Button>
+            </Link>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 pt-28 pb-16 px-4 bg-background flex items-center justify-center">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -81,8 +95,8 @@ const Cart = () => {
                   >
                     <div className="w-28 h-36 flex-shrink-0 overflow-hidden rounded-lg bg-muted">
                       <img
-                        src={item.image}
-                        alt={item.name}
+                        src={item.product?.image_url || "/placeholder.svg"}
+                        alt={item.product?.name || "Product"}
                         className="w-full h-full object-cover"
                       />
                     </div>
@@ -90,10 +104,10 @@ const Cart = () => {
                     <div className="flex-1 flex flex-col justify-between">
                       <div>
                         <h3 className="text-lg font-medium text-foreground">
-                          {item.name}
+                          {item.product?.name || "Product"}
                         </h3>
                         <p className="text-accent font-medium mt-1">
-                          ₹{item.price.toLocaleString()}
+                          ₹{(item.product?.price_inr || 0).toLocaleString()}
                         </p>
                       </div>
 
@@ -117,7 +131,7 @@ const Cart = () => {
                         </div>
 
                         <button
-                          onClick={() => removeItem(item.id)}
+                          onClick={() => removeFromCart(item.id)}
                           className="text-muted-foreground hover:text-primary transition-smooth"
                         >
                           <Trash2 className="w-5 h-5" />

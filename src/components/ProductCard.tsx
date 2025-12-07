@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { useCart } from "@/hooks/useCart";
 
 interface ProductCardProps {
   id: number;
@@ -15,6 +16,7 @@ interface ProductCardProps {
 const ProductCard = ({ id, image, name, price, description, onQuickView }: ProductCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const navigate = useNavigate();
+  const { addToCart } = useCart();
 
   const handleClick = (e: React.MouseEvent) => {
     // Check if ctrl/cmd key is pressed
@@ -23,6 +25,12 @@ const ProductCard = ({ id, image, name, price, description, onQuickView }: Produ
     } else {
       onQuickView();
     }
+  };
+
+  const handleAddToCart = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    // For now using string ID - when products come from DB, this will be UUID
+    await addToCart(id.toString());
   };
 
   return (
@@ -59,6 +67,7 @@ const ProductCard = ({ id, image, name, price, description, onQuickView }: Produ
             <Button
               variant="ghost"
               size="sm"
+              onClick={handleAddToCart}
               className={`transition-gentle border font-light tracking-wide ${
                 isHovered ? "border-accent text-accent" : "border-border text-foreground"
               }`}
