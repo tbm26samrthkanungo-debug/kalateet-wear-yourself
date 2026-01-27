@@ -1,6 +1,10 @@
 import { useState } from "react";
 import ProductCard from "./ProductCard";
 import ProductQuickView from "./ProductQuickView";
+import { useProducts, Product } from "@/hooks/useProducts";
+import { Loader2 } from "lucide-react";
+
+// Import local images for fallback mapping
 import product1 from "@/assets/product-1.jpg";
 import product2 from "@/assets/product-2.jpg";
 import product3 from "@/assets/product-3.jpg";
@@ -8,44 +12,13 @@ import product4 from "@/assets/product-4.jpg";
 
 type ProductStyle = "all" | "chikankari" | "block-print" | "embroidered";
 
-const products = [
-  {
-    id: 1,
-    image: product1,
-    name: "Oversize Red",
-    price: "₹3,299",
-    description: "Deep maroon half kurta with V-neck - timeless elegance meets comfort",
-    fabric: "Premium cotton blend with natural breathability. Machine wash cold, tumble dry low.",
-    style: "chikankari" as ProductStyle
-  },
-  {
-    id: 2,
-    image: product2,
-    name: "Olive Green Floral",
-    price: "₹3,899",
-    description: "Botanical print kurta with mandarin collar - nature's artistry woven in fabric",
-    fabric: "Soft cotton with botanical print. Hand wash recommended, dry in shade.",
-    style: "block-print" as ProductStyle
-  },
-  {
-    id: 3,
-    image: product3,
-    name: "Oversize Off-White",
-    price: "₹2,999",
-    description: "Textured beige kurta with collared V-neck - understated sophistication",
-    fabric: "Textured cotton weave for enhanced comfort. Machine wash cold, iron on low heat.",
-    style: "embroidered" as ProductStyle
-  },
-  {
-    id: 4,
-    image: product4,
-    name: "Light Chinese Blue",
-    price: "₹3,199",
-    description: "Striped kurta with mandarin collar - classic patterns, modern comfort",
-    fabric: "Cotton blend with vertical stripes. Machine washable, dry flat for best results.",
-    style: "chikankari" as ProductStyle
-  }
-];
+// Map product IDs to local images (for seeded products)
+const imageMap: Record<string, string> = {
+  "11111111-1111-1111-1111-111111111111": product1,
+  "22222222-2222-2222-2222-222222222222": product2,
+  "33333333-3333-3333-3333-333333333333": product3,
+  "44444444-4444-4444-4444-444444444444": product4,
+};
 
 const filters: { label: string; value: ProductStyle }[] = [
   { label: "All", value: "all" },
@@ -55,18 +28,37 @@ const filters: { label: string; value: ProductStyle }[] = [
 ];
 
 const ProductShowcase = () => {
-  const [selectedProduct, setSelectedProduct] = useState<typeof products[0] | null>(null);
+  const { products, loading } = useProducts(true); // Fetch featured products
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState<ProductStyle>("all");
 
-  const handleQuickView = (product: typeof products[0]) => {
+  const handleQuickView = (product: Product) => {
     setSelectedProduct(product);
     setIsQuickViewOpen(true);
   };
 
+  // Map style names to filter values
+  const styleToFilter = (style: string | null): ProductStyle => {
+    if (!style) return "all";
+    const lower = style.toLowerCase();
+    if (lower.includes("chikankari")) return "chikankari";
+    if (lower.includes("block")) return "block-print";
+    if (lower.includes("embroid")) return "embroidered";
+    return "all";
+  };
+
   const filteredProducts = activeFilter === "all" 
     ? products 
-    : products.filter(product => product.style === activeFilter);
+    : products.filter(product => styleToFilter(product.style) === activeFilter);
+
+  // Get product image - use mapped local image or fallback
+  const getProductImage = (product: Product): string => {
+    if (imageMap[product.id]) {
+      return imageMap[product.id];
+    }
+    return product.image_url || "/placeholder.svg";
+  };
 
   return (
     <section id="products" className="py-24 lg:py-32 bg-background">
@@ -99,23 +91,32 @@ const ProductShowcase = () => {
           ))}
         </div>
 
-        {/* Products Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
-          {filteredProducts.map((product) => (
-            <ProductCard
-              key={product.id}
-              id={product.id}
-              image={product.image}
-              name={product.name}
-              price={product.price}
-              description={product.description}
-              fabric={product.fabric}
-              onQuickView={() => handleQuickView(product)}
-            />
-          ))}
-        </div>
+        {/* Loading State */}
+        {loading && (
+          <div className="flex justify-center py-16">
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          </div>
+        )}
 
-        {filteredProducts.length === 0 && (
+        {/* Products Grid */}
+        {!loading && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+            {filteredProducts.map((product) => (
+              <ProductCard
+                key={product.id}
+                id={product.id}
+                image={getProductImage(product)}
+                name={product.name}
+                price={`₹${product.price_inr.toLocaleString()}`}
+                description={product.description || ""}
+                fabric={product.fabric || ""}
+                onQuickView={() => handleQuickView(product)}
+              />
+            ))}
+          </div>
+        )}
+
+        {!loading && filteredProducts.length === 0 && (
           <div className="text-center py-16">
             <p className="text-muted-foreground">No products found in this category.</p>
           </div>
@@ -126,7 +127,14 @@ const ProductShowcase = () => {
           <ProductQuickView
             isOpen={isQuickViewOpen}
             onClose={() => setIsQuickViewOpen(false)}
-            product={selectedProduct}
+            product={{
+              id: selectedProduct.id,
+              image: getProductImage(selectedProduct),
+              name: selectedProduct.name,
+              price: `₹${selectedProduct.price_inr.toLocaleString()}`,
+              description: selectedProduct.description || "",
+              fabric: selectedProduct.fabric || "",
+            }}
           />
         )}
 
