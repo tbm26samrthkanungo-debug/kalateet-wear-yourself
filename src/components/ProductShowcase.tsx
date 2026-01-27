@@ -9,8 +9,12 @@ import product1 from "@/assets/product-1.jpg";
 import product2 from "@/assets/product-2.jpg";
 import product3 from "@/assets/product-3.jpg";
 import product4 from "@/assets/product-4.jpg";
+import productFormalCollar from "@/assets/product-formal-collar.png";
+import productKendrick from "@/assets/product-kendrick.png";
+import productOversizeGrey from "@/assets/product-oversize-grey.png";
+import productMastersUnion from "@/assets/product-masters-union.png";
 
-type ProductStyle = "all" | "chikankari" | "block-print" | "embroidered";
+type ProductStyle = "all" | "chikankari" | "block-print" | "embroidered" | "formal" | "minimal";
 
 // Map product IDs to local images (for seeded products)
 const imageMap: Record<string, string> = {
@@ -18,6 +22,10 @@ const imageMap: Record<string, string> = {
   "22222222-2222-2222-2222-222222222222": product2,
   "33333333-3333-3333-3333-333333333333": product3,
   "44444444-4444-4444-4444-444444444444": product4,
+  "55555555-5555-5555-5555-555555555555": productFormalCollar,
+  "66666666-6666-6666-6666-666666666666": productKendrick,
+  "77777777-7777-7777-7777-777777777777": productOversizeGrey,
+  "88888888-8888-8888-8888-888888888888": productMastersUnion,
 };
 
 const filters: { label: string; value: ProductStyle }[] = [
@@ -25,6 +33,8 @@ const filters: { label: string; value: ProductStyle }[] = [
   { label: "Chikankari", value: "chikankari" },
   { label: "Block Print", value: "block-print" },
   { label: "Embroidered", value: "embroidered" },
+  { label: "Formal", value: "formal" },
+  { label: "Minimal", value: "minimal" },
 ];
 
 const ProductShowcase = () => {
@@ -45,6 +55,8 @@ const ProductShowcase = () => {
     if (lower.includes("chikankari")) return "chikankari";
     if (lower.includes("block")) return "block-print";
     if (lower.includes("embroid")) return "embroidered";
+    if (lower.includes("formal")) return "formal";
+    if (lower.includes("minimal")) return "minimal";
     return "all";
   };
 
