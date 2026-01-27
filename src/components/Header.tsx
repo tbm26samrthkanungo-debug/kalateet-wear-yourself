@@ -5,11 +5,13 @@ import { Button } from "@/components/ui/button";
 import kalateeLogo from "@/assets/kalateet-logo.png";
 import { smoothScrollToSection } from "@/lib/scrollUtils";
 import SearchOverlay from "./SearchOverlay";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const navigate = useNavigate();
+  const { user, signOut } = useAuth();
 
   const handleNavClick = (sectionId: string) => {
     // If not on home page, navigate first then scroll
@@ -68,12 +70,21 @@ const Header = () => {
 
             {/* Desktop Actions */}
             <div className="hidden md:flex items-center space-x-5">
-              <Link 
-                to="/login"
-                className="text-sm uppercase tracking-wider text-foreground hover:text-primary transition-smooth font-medium"
-              >
-                Login
-              </Link>
+              {user ? (
+                <button 
+                  onClick={() => signOut()}
+                  className="text-sm uppercase tracking-wider text-foreground hover:text-primary transition-smooth font-medium"
+                >
+                  Logout
+                </button>
+              ) : (
+                <Link 
+                  to="/login"
+                  className="text-sm uppercase tracking-wider text-foreground hover:text-primary transition-smooth font-medium"
+                >
+                  Login
+                </Link>
+              )}
               <button 
                 onClick={() => setIsSearchOpen(true)}
                 className="p-2 text-foreground hover:text-primary transition-smooth"
@@ -141,13 +152,25 @@ const Header = () => {
                 >
                   Contact Us
                 </button>
-                <Link
-                  to="/login"
-                  className="block w-full text-left px-3 py-2 text-foreground hover:text-primary transition-smooth"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Login
-                </Link>
+                {user ? (
+                  <button
+                    onClick={() => {
+                      signOut();
+                      setIsMenuOpen(false);
+                    }}
+                    className="block w-full text-left px-3 py-2 text-foreground hover:text-primary transition-smooth"
+                  >
+                    Logout
+                  </button>
+                ) : (
+                  <Link
+                    to="/login"
+                    className="block w-full text-left px-3 py-2 text-foreground hover:text-primary transition-smooth"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Login
+                  </Link>
+                )}
               </div>
             </div>
           )}
