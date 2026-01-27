@@ -56,7 +56,7 @@ const HeroSection = () => {
                 variant="outline" 
                 size="lg"
                 onClick={() => smoothScrollToSection('about')}
-                className="border-cream text-cream font-light px-12 py-6 rounded-sm transition-gentle hover:bg-transparent hover:text-white hover:border-white"
+                className="border-cream bg-transparent text-cream font-light px-12 py-6 rounded-sm transition-gentle hover:bg-cream hover:text-primary"
               >
                 About Us
               </Button>

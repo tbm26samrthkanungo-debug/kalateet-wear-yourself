@@ -8,7 +8,7 @@ interface ProductQuickViewProps {
   isOpen: boolean;
   onClose: () => void;
   product: {
-    id: number;
+    id: string;
     image: string;
     name: string;
     price: string;
@@ -22,14 +22,14 @@ const ProductQuickView = ({ isOpen, onClose, product }: ProductQuickViewProps) =
   const { toggleWishlist, isInWishlist } = useWishlist();
 
   const handleAddToCart = async () => {
-    await addToCart(product.id.toString());
+    await addToCart(product.id);
   };
 
   const handleToggleWishlist = async () => {
-    await toggleWishlist(product.id.toString());
+    await toggleWishlist(product.id);
   };
 
-  const inWishlist = isInWishlist(product.id.toString());
+  const inWishlist = isInWishlist(product.id);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

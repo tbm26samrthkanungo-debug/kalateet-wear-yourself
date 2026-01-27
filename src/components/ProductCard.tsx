@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
 import { useCart } from "@/hooks/useCart";
+import { Loader2 } from "lucide-react";
 
 interface ProductCardProps {
-  id: number;
+  id: string;
   image: string;
   name: string;
   price: string;
@@ -15,7 +15,7 @@ interface ProductCardProps {
 
 const ProductCard = ({ id, image, name, price, description, onQuickView }: ProductCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
-  const navigate = useNavigate();
+  const [isAdding, setIsAdding] = useState(false);
   const { addToCart } = useCart();
 
   const handleClick = (e: React.MouseEvent) => {
@@ -29,8 +29,9 @@ const ProductCard = ({ id, image, name, price, description, onQuickView }: Produ
 
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    // For now using string ID - when products come from DB, this will be UUID
-    await addToCart(id.toString());
+    setIsAdding(true);
+    await addToCart(id);
+    setIsAdding(false);
   };
 
   return (
@@ -68,11 +69,16 @@ const ProductCard = ({ id, image, name, price, description, onQuickView }: Produ
               variant="ghost"
               size="sm"
               onClick={handleAddToCart}
+              disabled={isAdding}
               className={`transition-gentle border font-light tracking-wide ${
                 isHovered ? "border-accent text-accent" : "border-border text-foreground"
               }`}
             >
-              Add to Cart
+              {isAdding ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                "Add to Cart"
+              )}
             </Button>
           </div>
         </div>
