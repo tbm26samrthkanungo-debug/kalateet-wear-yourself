@@ -16,11 +16,17 @@ const Login = () => {
   const navigate = useNavigate();
   const { signIn, signInWithGoogle, signInWithApple, user } = useAuth();
 
+  // Scroll to top on mount
   useEffect(() => {
-    if (user) {
-      navigate("/collection");
+    window.scrollTo(0, 0);
+  }, []);
+
+  // Redirect authenticated users to collection
+  useEffect(() => {
+    if (user && !loading) {
+      navigate("/collection", { replace: true });
     }
-  }, [user, navigate]);
+  }, [user, loading, navigate]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
