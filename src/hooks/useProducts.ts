@@ -13,6 +13,45 @@ export interface Product {
   is_featured: boolean | null;
 }
 
+export interface ProductImage {
+  id: string;
+  product_id: string;
+  image_url: string;
+  display_order: number;
+}
+
+export const useProductImages = (productId: string | null) => {
+  const [images, setImages] = useState<ProductImage[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!productId) {
+      setImages([]);
+      setLoading(false);
+      return;
+    }
+
+    const fetchImages = async () => {
+      const { data, error } = await supabase
+        .from("product_images")
+        .select("*")
+        .eq("product_id", productId)
+        .order("display_order");
+
+      if (error) {
+        console.error("Error fetching product images:", error);
+      } else {
+        setImages(data || []);
+      }
+      setLoading(false);
+    };
+
+    fetchImages();
+  }, [productId]);
+
+  return { images, loading };
+};
+
 export interface ProductVariant {
   id: string;
   product_id: string;

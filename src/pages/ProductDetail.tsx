@@ -1,10 +1,10 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Loader2, Truck, Shield, RotateCcw, Ruler } from "lucide-react";
-import { useProduct, useProductVariants } from "@/hooks/useProducts";
+import { Loader2, Truck, Shield, RotateCcw, Ruler, ChevronLeft, ChevronRight } from "lucide-react";
+import { useProduct, useProductVariants, useProductImages } from "@/hooks/useProducts";
 import { useCart } from "@/hooks/useCart";
 import { useWishlist } from "@/hooks/useWishlist";
 import { useToast } from "@/hooks/use-toast";
@@ -19,7 +19,19 @@ import productKendrick from "@/assets/product-kendrick.png";
 import productOversizeGrey from "@/assets/product-oversize-grey.png";
 import productMastersUnion from "@/assets/product-masters-union.png";
 
-const imageMap: Record<string, string> = {
+// Multiple images per product for carousel
+const productImagesMap: Record<string, string[]> = {
+  "11111111-1111-1111-1111-111111111111": [product1, product2, product3],
+  "22222222-2222-2222-2222-222222222222": [product2, product1, product4],
+  "33333333-3333-3333-3333-333333333333": [product3, product4, product1],
+  "44444444-4444-4444-4444-444444444444": [product4, product3, product2],
+  "55555555-5555-5555-5555-555555555555": [productFormalCollar, productKendrick, productOversizeGrey],
+  "66666666-6666-6666-6666-666666666666": [productKendrick, productMastersUnion, productFormalCollar],
+  "77777777-7777-7777-7777-777777777777": [productOversizeGrey, productFormalCollar, productMastersUnion],
+  "88888888-8888-8888-8888-888888888888": [productMastersUnion, productOversizeGrey, productKendrick],
+};
+
+const singleImageMap: Record<string, string> = {
   "11111111-1111-1111-1111-111111111111": product1,
   "22222222-2222-2222-2222-222222222222": product2,
   "33333333-3333-3333-3333-333333333333": product3,
@@ -30,25 +42,68 @@ const imageMap: Record<string, string> = {
   "88888888-8888-8888-8888-888888888888": productMastersUnion,
 };
 
+const AUTO_SLIDE_INTERVAL = 3500;
+
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { product, loading } = useProduct(id || null);
   const { variants, loading: variantsLoading } = useProductVariants(id || null);
+  const { images: dbImages } = useProductImages(id || null);
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const { toast } = useToast();
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState(false);
+  const [currentImageIdx, setCurrentImageIdx] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
 
-  const getImage = () => {
-    if (!product) return "/placeholder.svg";
-    return imageMap[product.id] || product.image_url || "/placeholder.svg";
-  };
+  // Build image list: DB images first, then fallback to local map
+  const allImages: string[] = (() => {
+    if (dbImages.length > 0) {
+      return dbImages.map(img => img.image_url);
+    }
+    if (product && productImagesMap[product.id]) {
+      return productImagesMap[product.id];
+    }
+    if (product) {
+      const single = singleImageMap[product.id] || product.image_url || "/placeholder.svg";
+      return [single];
+    }
+    return ["/placeholder.svg"];
+  })();
+
+  // Reset index when product changes
+  useEffect(() => {
+    setCurrentImageIdx(0);
+  }, [id]);
+
+  // Auto-rotate images
+  useEffect(() => {
+    if (allImages.length <= 1) return;
+
+    const interval = setInterval(() => {
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCurrentImageIdx(prev => (prev + 1) % allImages.length);
+        setIsTransitioning(false);
+      }, 300);
+    }, AUTO_SLIDE_INTERVAL);
+
+    return () => clearInterval(interval);
+  }, [allImages.length]);
+
+  const goToImage = useCallback((idx: number) => {
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setCurrentImageIdx(idx);
+      setIsTransitioning(false);
+    }, 200);
+  }, []);
 
   const handleAddToCart = async () => {
     if (!product) return;
@@ -109,13 +164,81 @@ const ProductDetail = () => {
           </div>
 
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20">
-            {/* Product Image */}
-            <div className="bg-muted rounded-2xl overflow-hidden shadow-medium flex items-center justify-center">
-              <img
-                src={getImage()}
-                alt={`${product.name} - Kalateet premium kurta`}
-                className="w-full max-h-[70vh] object-contain"
-              />
+            {/* Product Image Carousel */}
+            <div className="space-y-4">
+              <div className="relative bg-muted rounded-2xl overflow-hidden shadow-medium flex items-center justify-center group">
+                <img
+                  src={allImages[currentImageIdx]}
+                  alt={`${product.name} - image ${currentImageIdx + 1}`}
+                  className={`w-full max-h-[70vh] object-contain transition-all duration-300 ${
+                    isTransitioning ? "opacity-0 scale-[0.98]" : "opacity-100 scale-100"
+                  }`}
+                />
+
+                {/* Navigation arrows */}
+                {allImages.length > 1 && (
+                  <>
+                    <button
+                      onClick={() => goToImage((currentImageIdx - 1 + allImages.length) % allImages.length)}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm shadow-medium flex items-center justify-center opacity-0 group-hover:opacity-100 transition-smooth hover:bg-background"
+                      aria-label="Previous image"
+                    >
+                      <ChevronLeft className="w-5 h-5 text-foreground" />
+                    </button>
+                    <button
+                      onClick={() => goToImage((currentImageIdx + 1) % allImages.length)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm shadow-medium flex items-center justify-center opacity-0 group-hover:opacity-100 transition-smooth hover:bg-background"
+                      aria-label="Next image"
+                    >
+                      <ChevronRight className="w-5 h-5 text-foreground" />
+                    </button>
+                  </>
+                )}
+
+                {/* Image counter */}
+                {allImages.length > 1 && (
+                  <div className="absolute bottom-3 right-3 px-3 py-1 text-xs bg-background/80 backdrop-blur-sm rounded-full text-foreground font-medium shadow-soft">
+                    {currentImageIdx + 1} / {allImages.length}
+                  </div>
+                )}
+              </div>
+
+              {/* Thumbnail dots / progress indicators */}
+              {allImages.length > 1 && (
+                <div className="flex justify-center gap-2">
+                  {allImages.map((_, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => goToImage(idx)}
+                      className={`h-1.5 rounded-full transition-all duration-300 ${
+                        idx === currentImageIdx
+                          ? "bg-primary w-8"
+                          : "bg-border w-4 hover:bg-muted-foreground"
+                      }`}
+                      aria-label={`Go to image ${idx + 1}`}
+                    />
+                  ))}
+                </div>
+              )}
+
+              {/* Thumbnail strip */}
+              {allImages.length > 1 && (
+                <div className="flex gap-3 overflow-x-auto pb-1">
+                  {allImages.map((img, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => goToImage(idx)}
+                      className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-smooth ${
+                        idx === currentImageIdx
+                          ? "border-primary shadow-soft"
+                          : "border-transparent opacity-60 hover:opacity-100"
+                      }`}
+                    >
+                      <img src={img} alt="" className="w-full h-full object-cover" />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Product Details */}
@@ -134,46 +257,30 @@ const ProductDetail = () => {
                 ₹{product.price_inr.toLocaleString()}
               </p>
 
-              {/* Description */}
               {product.description && (
                 <div className="mb-6">
-                  <h2 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-2">
-                    Description
-                  </h2>
-                  <p className="text-muted-foreground leading-relaxed">
-                    {product.description}
-                  </p>
+                  <h2 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-2">Description</h2>
+                  <p className="text-muted-foreground leading-relaxed">{product.description}</p>
                 </div>
               )}
 
-              {/* Fabric */}
               {product.fabric && (
                 <div className="mb-6">
-                  <h2 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-2">
-                    Fabric & Care
-                  </h2>
-                  <p className="text-muted-foreground leading-relaxed text-sm">
-                    {product.fabric}
-                  </p>
+                  <h2 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-2">Fabric & Care</h2>
+                  <p className="text-muted-foreground leading-relaxed text-sm">{product.fabric}</p>
                 </div>
               )}
 
-              {/* Color */}
               {product.color && (
                 <div className="mb-6">
-                  <h2 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-2">
-                    Color
-                  </h2>
+                  <h2 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-2">Color</h2>
                   <p className="text-muted-foreground text-sm capitalize">{product.color}</p>
                 </div>
               )}
 
-              {/* Size Selector */}
               {!variantsLoading && variants.length > 0 && (
                 <div className="mb-8">
-                  <h2 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-3">
-                    Select Size
-                  </h2>
+                  <h2 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-3">Select Size</h2>
                   <div className="flex flex-wrap gap-3">
                     {variants.map((v) => (
                       <button
@@ -195,7 +302,6 @@ const ProductDetail = () => {
                 </div>
               )}
 
-              {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-3 mb-8">
                 <Button
                   size="lg"
