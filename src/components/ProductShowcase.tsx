@@ -1,7 +1,10 @@
 import { useState } from "react";
-import ProductCard from "./ProductCard";
-import ProductQuickView from "./ProductQuickView";
+import MasonryGrid from "./MasonryGrid";
+import CardModal from "./CardModal";
+import { Button } from "@/components/ui/button";
 import { useProducts, Product } from "@/hooks/useProducts";
+import { useCart } from "@/hooks/useCart";
+import { useWishlist } from "@/hooks/useWishlist";
 import { Loader2 } from "lucide-react";
 
 // Import local images for fallback mapping
@@ -16,7 +19,6 @@ import productMastersUnion from "@/assets/product-masters-union.png";
 
 type ProductStyle = "all" | "chikankari" | "block-print" | "embroidered" | "formal" | "minimal";
 
-// Map product IDs to local images (for seeded products)
 const imageMap: Record<string, string> = {
   "11111111-1111-1111-1111-111111111111": product1,
   "22222222-2222-2222-2222-222222222222": product2,
@@ -28,6 +30,9 @@ const imageMap: Record<string, string> = {
   "88888888-8888-8888-8888-888888888888": productMastersUnion,
 };
 
+// Varying aspect ratios for masonry effect
+const tileHeights = ["aspect-[3/4]", "aspect-[2/3]", "aspect-[4/5]", "aspect-square", "aspect-[3/4]", "aspect-[2/3]", "aspect-[4/5]", "aspect-[3/5]"];
+
 const filters: { label: string; value: ProductStyle }[] = [
   { label: "All", value: "all" },
   { label: "Chikankari", value: "chikankari" },
@@ -38,17 +43,12 @@ const filters: { label: string; value: ProductStyle }[] = [
 ];
 
 const ProductShowcase = () => {
-  const { products, loading } = useProducts(true); // Fetch featured products
+  const { products, loading } = useProducts(true);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState<ProductStyle>("all");
+  const { addToCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
 
-  const handleQuickView = (product: Product) => {
-    setSelectedProduct(product);
-    setIsQuickViewOpen(true);
-  };
-
-  // Map style names to filter values
   const styleToFilter = (style: string | null): ProductStyle => {
     if (!style) return "all";
     const lower = style.toLowerCase();
@@ -60,16 +60,17 @@ const ProductShowcase = () => {
     return "all";
   };
 
-  const filteredProducts = activeFilter === "all" 
-    ? products 
+  const filteredProducts = activeFilter === "all"
+    ? products
     : products.filter(product => styleToFilter(product.style) === activeFilter);
 
-  // Get product image - use mapped local image or fallback
   const getProductImage = (product: Product): string => {
-    if (imageMap[product.id]) {
-      return imageMap[product.id];
-    }
+    if (imageMap[product.id]) return imageMap[product.id];
     return product.image_url || "/placeholder.svg";
+  };
+
+  const handleAddToCart = async (productId: string) => {
+    await addToCart(productId);
   };
 
   return (
@@ -80,7 +81,7 @@ const ProductShowcase = () => {
             Our Collection
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed font-light">
-            Each piece is thoughtfully crafted to blend traditional Indian artistry 
+            Each piece is thoughtfully crafted to blend traditional Indian artistry
             with modern everyday comfort.
           </p>
           <div className="w-20 h-0.5 bg-accent mx-auto mt-8" />
@@ -110,22 +111,38 @@ const ProductShowcase = () => {
           </div>
         )}
 
-        {/* Products Grid */}
-        {!loading && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
-            {filteredProducts.map((product) => (
-              <ProductCard
-                key={product.id}
-                id={product.id}
-                image={getProductImage(product)}
-                name={product.name}
-                price={`₹${product.price_inr.toLocaleString()}`}
-                description={product.description || ""}
-                fabric={product.fabric || ""}
-                onQuickView={() => handleQuickView(product)}
-              />
-            ))}
-          </div>
+        {/* Masonry Products Grid */}
+        {!loading && filteredProducts.length > 0 && (
+          <MasonryGrid columns={4} mobileColumns={2} gap={16}>
+            {filteredProducts.map((product, index) => {
+              const image = getProductImage(product);
+              return (
+                <div
+                  key={product.id}
+                  className="group cursor-pointer rounded-2xl overflow-hidden shadow-soft hover:shadow-large transition-smooth"
+                  onClick={() => setSelectedProduct(product)}
+                >
+                  <div className={`relative overflow-hidden ${tileHeights[index % tileHeights.length]} bg-muted`}>
+                    <img
+                      src={image}
+                      alt={`${product.name} - premium half kurta`}
+                      loading="lazy"
+                      className="w-full h-full object-cover group-hover:scale-[1.02] transition-gentle"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-4">
+                      <h3 className="text-white font-semibold text-sm leading-tight mb-0.5">
+                        {product.name}
+                      </h3>
+                      <p className="text-white/80 text-xs">
+                        ₹{product.price_inr.toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </MasonryGrid>
         )}
 
         {!loading && filteredProducts.length === 0 && (
@@ -134,20 +151,72 @@ const ProductShowcase = () => {
           </div>
         )}
 
-        {/* Quick View Modal */}
+        {/* Product Modal */}
         {selectedProduct && (
-          <ProductQuickView
-            isOpen={isQuickViewOpen}
-            onClose={() => setIsQuickViewOpen(false)}
-            product={{
-              id: selectedProduct.id,
-              image: getProductImage(selectedProduct),
-              name: selectedProduct.name,
-              price: `₹${selectedProduct.price_inr.toLocaleString()}`,
-              description: selectedProduct.description || "",
-              fabric: selectedProduct.fabric || "",
-            }}
-          />
+          <CardModal
+            isOpen={!!selectedProduct}
+            onClose={() => setSelectedProduct(null)}
+            title={selectedProduct.name}
+          >
+            <div className="overflow-hidden rounded-2xl">
+              <div className="relative w-full max-h-[50vh] overflow-hidden bg-muted">
+                <img
+                  src={getProductImage(selectedProduct)}
+                  alt={selectedProduct.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="p-8 lg:p-10">
+                <h2 className="text-2xl lg:text-3xl font-semibold text-foreground mb-2 tracking-wide">
+                  {selectedProduct.name}
+                </h2>
+                <p className="text-2xl text-accent mb-4 font-medium tracking-wide">
+                  ₹{selectedProduct.price_inr.toLocaleString()}
+                </p>
+                {selectedProduct.description && (
+                  <div className="mb-6">
+                    <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-1">Description</h3>
+                    <p className="text-muted-foreground leading-relaxed">{selectedProduct.description}</p>
+                  </div>
+                )}
+                {selectedProduct.fabric && (
+                  <div className="mb-6">
+                    <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-1">Fabric & Care</h3>
+                    <p className="text-muted-foreground text-sm">{selectedProduct.fabric}</p>
+                  </div>
+                )}
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Button
+                    size="lg"
+                    onClick={() => handleAddToCart(selectedProduct.id)}
+                    className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90 font-normal tracking-wide"
+                  >
+                    Add to Cart
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    onClick={() => toggleWishlist(selectedProduct.id)}
+                    className={`flex-1 font-light tracking-wide ${
+                      isInWishlist(selectedProduct.id)
+                        ? "border-accent text-accent hover:bg-accent/10"
+                        : "border-border text-foreground hover:bg-muted"
+                    }`}
+                  >
+                    {isInWishlist(selectedProduct.id) ? "In Lookbook ♥" : "Add to Lookbook"}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    onClick={() => window.open(`/product/${selectedProduct.id}`, "_self")}
+                    className="flex-1 font-light tracking-wide border-border text-foreground hover:bg-muted"
+                  >
+                    Full Details →
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </CardModal>
         )}
 
         <div className="text-center mt-16">
