@@ -1,10 +1,11 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import MasonryGrid from "./MasonryGrid";
 import DiscoveryCard, { DiscoveryCardData } from "./DiscoveryCard";
 import CardModal from "./CardModal";
 import { Button } from "@/components/ui/button";
 import { useProducts } from "@/hooks/useProducts";
 import { useCart } from "@/hooks/useCart";
+import { Loader2 } from "lucide-react";
 
 // Local images
 import mosaic1 from "@/assets/mosaic-1.jpg";
@@ -39,6 +40,8 @@ const imageMap: Record<string, string> = {
   "77777777-7777-7777-7777-777777777777": productOversizeGrey,
   "88888888-8888-8888-8888-888888888888": productMastersUnion,
 };
+
+const BATCH_SIZE = 6;
 
 // Static editorial/philosophy/inspiration cards
 const editorialCards: DiscoveryCardData[] = [
@@ -152,12 +155,52 @@ const editorialCards: DiscoveryCardData[] = [
     description: "The half kurta was once reserved for festivals. Today it's for Monday meetings, Saturday brunch, and Sunday adventures. We're part of a quiet revolution in Indian menswear.",
     height: "short",
   },
+  // Additional cards for infinite-scroll feel
+  {
+    id: "phil-3",
+    type: "philosophy",
+    image: mosaic9,
+    title: "Craftsmanship Over Mass Production",
+    subtitle: "Handmade with intention",
+    description: "In a world of fast fashion, we choose slow craft. Every Kalateet piece passes through the hands of skilled artisans who bring decades of tradition to each stitch.",
+    height: "medium",
+  },
+  {
+    id: "insp-5",
+    type: "inspiration",
+    image: story4,
+    title: "Street Style Meets Heritage",
+    subtitle: "The new Indian aesthetic",
+    description: "From Mumbai locals to Delhi metros, a new generation is blending global streetwear with Indian sensibility. The result? A style that's unmistakably ours.",
+    height: "tall",
+  },
+  {
+    id: "story-5",
+    type: "story",
+    image: mosaic1,
+    title: "Festival Season, Redefined",
+    subtitle: "Beyond the heavy sherwani",
+    description: "Festivals don't need heavy embroidery. A well-cut half kurta with subtle detailing can be just as festive — and far more comfortable for the celebrations that matter.",
+    height: "short",
+  },
+  {
+    id: "insp-6",
+    type: "inspiration",
+    image: mosaic5,
+    title: "The Color of Confidence",
+    subtitle: "Earth tones and beyond",
+    description: "Our palette draws from the Indian landscape — sandstone ochres, monsoon greens, terracotta reds. Colors that feel grounded, authentic, and distinctly Indian.",
+    height: "medium",
+  },
 ];
 
 const DiscoverySection = () => {
   const { products } = useProducts(true);
   const { addToCart } = useCart();
   const [selectedCard, setSelectedCard] = useState<DiscoveryCardData | null>(null);
+  const [visibleCount, setVisibleCount] = useState(BATCH_SIZE);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const sentinelRef = useRef<HTMLDivElement>(null);
 
   // Merge product cards with editorial cards
   const allCards = useMemo(() => {
@@ -174,24 +217,46 @@ const DiscoverySection = () => {
       productId: p.id,
     }));
 
-    // Interleave product cards into editorial cards
     const merged: DiscoveryCardData[] = [];
     let prodIdx = 0;
     editorialCards.forEach((card, i) => {
       merged.push(card);
-      // Insert a product card after every 3rd editorial card
       if ((i + 1) % 3 === 0 && prodIdx < productCards.length) {
         merged.push(productCards[prodIdx]);
         prodIdx++;
       }
     });
-    // Add remaining product cards
     while (prodIdx < productCards.length) {
       merged.push(productCards[prodIdx]);
       prodIdx++;
     }
     return merged;
   }, [products]);
+
+  const visibleCards = allCards.slice(0, visibleCount);
+  const hasMore = visibleCount < allCards.length;
+
+  // IntersectionObserver for infinite scroll
+  useEffect(() => {
+    if (!sentinelRef.current || !hasMore) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !loadingMore) {
+          setLoadingMore(true);
+          // Simulate a small delay for smooth loading feel
+          setTimeout(() => {
+            setVisibleCount((prev) => Math.min(prev + BATCH_SIZE, allCards.length));
+            setLoadingMore(false);
+          }, 400);
+        }
+      },
+      { rootMargin: "200px" }
+    );
+
+    observer.observe(sentinelRef.current);
+    return () => observer.disconnect();
+  }, [hasMore, loadingMore, allCards.length]);
 
   const handleAddToCart = async (productId: string) => {
     await addToCart(productId);
@@ -211,7 +276,7 @@ const DiscoverySection = () => {
         </div>
 
         <MasonryGrid columns={4} mobileColumns={1} gap={16}>
-          {allCards.map((card) => (
+          {visibleCards.map((card) => (
             <DiscoveryCard
               key={card.id}
               card={card}
@@ -219,6 +284,15 @@ const DiscoverySection = () => {
             />
           ))}
         </MasonryGrid>
+
+        {/* Infinite scroll sentinel */}
+        {hasMore && (
+          <div ref={sentinelRef} className="flex justify-center py-12">
+            {loadingMore && (
+              <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+            )}
+          </div>
+        )}
       </div>
 
       {/* Card Modal */}
@@ -229,12 +303,18 @@ const DiscoverySection = () => {
           title={selectedCard.title}
         >
           <div className="overflow-hidden rounded-2xl">
-            {/* Image */}
-            <div className="relative w-full max-h-[50vh] overflow-hidden">
+            {/* Image — use object-contain for products to avoid cropping */}
+            <div className={`relative w-full overflow-hidden ${
+              selectedCard.type === "product" ? "bg-muted flex items-center justify-center" : ""
+            }`}>
               <img
                 src={selectedCard.image}
                 alt={selectedCard.title}
-                className="w-full h-full object-cover"
+                className={`w-full ${
+                  selectedCard.type === "product"
+                    ? "max-h-[60vh] object-contain"
+                    : "max-h-[50vh] object-cover"
+                }`}
               />
               {selectedCard.category && (
                 <span className="absolute top-4 left-4 px-3 py-1 text-xs uppercase tracking-wider font-medium bg-background/80 backdrop-blur-sm text-foreground rounded-full">
