@@ -159,11 +159,11 @@ const ProductShowcase = () => {
             title={selectedProduct.name}
           >
             <div className="overflow-hidden rounded-2xl">
-              <div className="relative w-full max-h-[50vh] overflow-hidden bg-muted">
+              <div className="relative w-full overflow-hidden bg-muted flex items-center justify-center">
                 <img
                   src={getProductImage(selectedProduct)}
                   alt={selectedProduct.name}
-                  className="w-full h-full object-cover"
+                  className="w-full max-h-[60vh] object-contain"
                 />
               </div>
               <div className="p-8 lg:p-10">
