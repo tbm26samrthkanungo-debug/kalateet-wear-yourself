@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { Menu, X, ShoppingBag, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import kalateeLogo from "@/assets/kalateet-logo.png";
-import { smoothScrollToSection } from "@/lib/scrollUtils";
 import SearchOverlay from "./SearchOverlay";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -13,16 +12,12 @@ const Header = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
 
-  const handleNavClick = (sectionId: string) => {
-    // If not on home page, navigate first then scroll
-    if (window.location.pathname !== "/") {
-      navigate("/");
-      setTimeout(() => smoothScrollToSection(sectionId), 100);
-    } else {
-      smoothScrollToSection(sectionId);
-    }
-    setIsMenuOpen(false);
-  };
+  const navItems = [
+    { label: "Collection", href: "/collection" },
+    { label: "About Us", href: "/about" },
+    { label: "Blog", href: "/blog" },
+    { label: "Contact Us", href: "/contact" },
+  ];
 
   return (
     <>
@@ -32,60 +27,41 @@ const Header = () => {
             {/* Logo */}
             <div className="flex-shrink-0">
               <Link to="/">
-                <img
-                  src={kalateeLogo}
-                  alt="Kalateet"
-                  className="h-12 w-auto"
-                />
+                <img src={kalateeLogo} alt="Kalateet" className="h-12 w-auto" />
               </Link>
             </div>
 
             {/* Desktop Navigation - Centered */}
             <nav className="hidden md:flex items-center space-x-10 absolute left-1/2 transform -translate-x-1/2">
-              <button 
-                onClick={() => handleNavClick('products')}
-                className="text-sm uppercase tracking-wider text-foreground hover:text-primary transition-smooth font-medium"
-              >
-                Collection
-              </button>
-              <button 
-                onClick={() => handleNavClick('about')}
-                className="text-sm uppercase tracking-wider text-foreground hover:text-primary transition-smooth font-medium"
-              >
-                About Us
-              </button>
-              <Link 
-                to="/blog"
-                className="text-sm uppercase tracking-wider text-foreground hover:text-primary transition-smooth font-medium"
-              >
-                Blog
-              </Link>
-              <button 
-                onClick={() => handleNavClick('contact')}
-                className="text-sm uppercase tracking-wider text-foreground hover:text-primary transition-smooth font-medium"
-              >
-                Contact Us
-              </button>
+              {navItems.map((item) => (
+                <Link
+                  key={item.href}
+                  to={item.href}
+                  className="text-sm uppercase tracking-wider text-foreground hover:text-primary transition-smooth font-medium"
+                >
+                  {item.label}
+                </Link>
+              ))}
             </nav>
 
             {/* Desktop Actions */}
             <div className="hidden md:flex items-center space-x-5">
               {user ? (
-                <button 
+                <button
                   onClick={() => signOut()}
                   className="text-sm uppercase tracking-wider text-foreground hover:text-primary transition-smooth font-medium"
                 >
                   Logout
                 </button>
               ) : (
-                <Link 
+                <Link
                   to="/login"
                   className="text-sm uppercase tracking-wider text-foreground hover:text-primary transition-smooth font-medium"
                 >
                   Login
                 </Link>
               )}
-              <button 
+              <button
                 onClick={() => setIsSearchOpen(true)}
                 className="p-2 text-foreground hover:text-primary transition-smooth"
                 aria-label="Search"
@@ -101,7 +77,7 @@ const Header = () => {
 
             {/* Mobile menu button */}
             <div className="md:hidden flex items-center gap-2">
-              <button 
+              <button
                 onClick={() => setIsSearchOpen(true)}
                 className="p-2 text-foreground hover:text-primary transition-smooth"
                 aria-label="Search"
@@ -113,11 +89,7 @@ const Header = () => {
                   <ShoppingBag className="h-5 w-5" />
                 </Button>
               </Link>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-              >
+              <Button variant="ghost" size="icon" onClick={() => setIsMenuOpen(!isMenuOpen)}>
                 {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
               </Button>
             </div>
@@ -127,31 +99,16 @@ const Header = () => {
           {isMenuOpen && (
             <div className="md:hidden">
               <div className="px-2 pt-2 pb-3 space-y-1 bg-background border-t border-border shadow-medium">
-                <button
-                  onClick={() => handleNavClick('products')}
-                  className="block w-full text-left px-3 py-2 text-foreground hover:text-primary transition-smooth"
-                >
-                  Collection
-                </button>
-                <button
-                  onClick={() => handleNavClick('about')}
-                  className="block w-full text-left px-3 py-2 text-foreground hover:text-primary transition-smooth"
-                >
-                  About Us
-                </button>
-                <Link
-                  to="/blog"
-                  className="block w-full text-left px-3 py-2 text-foreground hover:text-primary transition-smooth"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Blog
-                </Link>
-                <button
-                  onClick={() => handleNavClick('contact')}
-                  className="block w-full text-left px-3 py-2 text-foreground hover:text-primary transition-smooth"
-                >
-                  Contact Us
-                </button>
+                {navItems.map((item) => (
+                  <Link
+                    key={item.href}
+                    to={item.href}
+                    className="block w-full text-left px-3 py-2 text-foreground hover:text-primary transition-smooth"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
                 {user ? (
                   <button
                     onClick={() => {
@@ -177,7 +134,6 @@ const Header = () => {
         </div>
       </header>
 
-      {/* Search Overlay */}
       <SearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </>
   );
