@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import MasonryGrid from "./MasonryGrid";
 import CardModal from "./CardModal";
 import { Button } from "@/components/ui/button";
