@@ -48,17 +48,23 @@ const HeroSection = () => {
                 variant="default" 
                 size="lg" 
                 onClick={() => smoothScrollToSection('products')}
-                className="bg-cream text-primary font-normal px-12 py-6 rounded-sm transition-gentle shadow-medium hover:shadow-large hover:bg-transparent hover:text-white hover:border-white border border-transparent"
+                className="group relative bg-white text-primary font-normal px-12 py-6 rounded-sm border border-white shadow-medium overflow-hidden transition-all duration-500 hover:shadow-large hover:scale-[1.03] active:scale-[0.98]"
               >
-                Explore Collection
+                <span className="absolute inset-0 bg-primary scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500 ease-out" />
+                <span className="relative z-10 group-hover:text-white transition-colors duration-500">
+                  Explore Collection
+                </span>
               </Button>
               <Button 
                 variant="outline" 
                 size="lg"
                 onClick={() => smoothScrollToSection('about')}
-                className="border-cream bg-transparent text-cream font-light px-12 py-6 rounded-sm transition-gentle hover:bg-cream hover:text-primary"
+                className="group relative bg-white text-primary font-light px-12 py-6 rounded-sm border border-white shadow-medium overflow-hidden transition-all duration-500 hover:shadow-large hover:scale-[1.03] active:scale-[0.98]"
               >
-                About Us
+                <span className="absolute inset-0 bg-primary scale-x-0 group-hover:scale-x-100 origin-right transition-transform duration-500 ease-out" />
+                <span className="relative z-10 group-hover:text-white transition-colors duration-500">
+                  About Us
+                </span>
               </Button>
             </div>
           </div>
