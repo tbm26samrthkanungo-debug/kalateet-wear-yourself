@@ -5,6 +5,7 @@ import CardModal from "./CardModal";
 import { Button } from "@/components/ui/button";
 import { useProducts } from "@/hooks/useProducts";
 import { useCart } from "@/hooks/useCart";
+import { useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 
 // Local images
