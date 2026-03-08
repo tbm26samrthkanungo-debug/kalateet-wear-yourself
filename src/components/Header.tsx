@@ -13,6 +13,7 @@ const Header = () => {
   const { user, signOut } = useAuth();
 
   const navItems = [
+    { label: "Home", href: "/" },
     { label: "Collection", href: "/collection" },
     { label: "About Us", href: "/about" },
     { label: "Blog", href: "/blog" },
