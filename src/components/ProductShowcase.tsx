@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import MasonryGrid from "./MasonryGrid";
 import CardModal from "./CardModal";
 import { Button } from "@/components/ui/button";
@@ -47,6 +48,7 @@ const ProductShowcase = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [activeFilter, setActiveFilter] = useState<ProductStyle>("all");
   const { addToCart } = useCart();
+  const navigate = useNavigate();
   const { toggleWishlist, isInWishlist } = useWishlist();
 
   const styleToFilter = (style: string | null): ProductStyle => {
@@ -208,7 +210,7 @@ const ProductShowcase = () => {
                   <Button
                     variant="outline"
                     size="lg"
-                    onClick={() => window.open(`/product/${selectedProduct.id}`, "_self")}
+                    onClick={() => { setSelectedProduct(null); navigate(`/product/${selectedProduct.id}`); }}
                     className="flex-1 font-light tracking-wide border-border text-foreground hover:bg-muted"
                   >
                     Full Details →

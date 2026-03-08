@@ -5,6 +5,7 @@ import CardModal from "./CardModal";
 import { Button } from "@/components/ui/button";
 import { useProducts } from "@/hooks/useProducts";
 import { useCart } from "@/hooks/useCart";
+import { useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 
 // Local images
@@ -197,6 +198,7 @@ const editorialCards: DiscoveryCardData[] = [
 const DiscoverySection = () => {
   const { products } = useProducts(true);
   const { addToCart } = useCart();
+  const navigate = useNavigate();
   const [selectedCard, setSelectedCard] = useState<DiscoveryCardData | null>(null);
   const [visibleCount, setVisibleCount] = useState(BATCH_SIZE);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -362,7 +364,7 @@ const DiscoverySection = () => {
                     <Button
                       variant="outline"
                       size="lg"
-                      onClick={() => window.open(`/product/${selectedCard.productId}`, "_self")}
+                      onClick={() => { setSelectedCard(null); navigate(`/product/${selectedCard.productId}`); }}
                       className="flex-1 font-light tracking-wide border-border text-foreground hover:bg-muted"
                     >
                       View Details
@@ -373,7 +375,7 @@ const DiscoverySection = () => {
                   <Button
                     variant="outline"
                     size="lg"
-                    onClick={() => window.open("/blog", "_self")}
+                    onClick={() => { setSelectedCard(null); navigate("/blog"); }}
                     className="font-light tracking-wide border-border text-foreground hover:bg-muted"
                   >
                     Read More on Blog →
