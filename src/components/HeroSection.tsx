@@ -1,10 +1,12 @@
 import { Button } from "@/components/ui/button";
 import kalateeLogo from "@/assets/kalateet-logo.png";
-import { smoothScrollToSection } from "@/lib/scrollUtils";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import WaitlistModal from "@/components/WaitlistModal";
 
 const HeroSection = () => {
   const navigate = useNavigate();
+  const [waitlistOpen, setWaitlistOpen] = useState(false);
 
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center gradient-hero pt-20 overflow-hidden">
@@ -34,7 +36,6 @@ const HeroSection = () => {
       <div className="relative z-10 w-full">
         <div className="flex flex-col items-center text-center px-4 sm:px-6 lg:px-8">
           <div className="animate-fade-in max-w-4xl">
-            {/* Logo */}
             <div className="mb-16">
               <img
                 src={kalateeLogo}
@@ -68,12 +69,12 @@ const HeroSection = () => {
               <Button 
                 variant="outline" 
                 size="lg"
-                onClick={() => navigate('/about')}
-                className="group relative bg-white text-primary font-light px-12 py-6 rounded-sm border border-white shadow-medium overflow-hidden transition-all duration-500 hover:shadow-large hover:scale-[1.03] active:scale-[0.98]"
+                onClick={() => setWaitlistOpen(true)}
+                className="group relative bg-transparent text-cream font-light px-12 py-6 rounded-sm border border-cream/60 shadow-medium overflow-hidden transition-all duration-500 hover:shadow-large hover:scale-[1.03] active:scale-[0.98] hover:border-cream"
               >
-                <span className="absolute inset-0 bg-primary scale-x-0 group-hover:scale-x-100 origin-right transition-transform duration-500 ease-out" />
-                <span className="relative z-10 group-hover:text-white transition-colors duration-500">
-                  About Us
+                <span className="absolute inset-0 bg-cream/10 scale-x-0 group-hover:scale-x-100 origin-right transition-transform duration-500 ease-out" />
+                <span className="relative z-10 transition-colors duration-500">
+                  Join Waitlist
                 </span>
               </Button>
             </div>
@@ -87,6 +88,8 @@ const HeroSection = () => {
           Scroll
         </div>
       </div>
+
+      <WaitlistModal isOpen={waitlistOpen} onClose={() => setWaitlistOpen(false)} />
     </section>
   );
 };

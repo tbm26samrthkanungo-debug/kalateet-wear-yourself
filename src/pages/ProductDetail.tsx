@@ -8,6 +8,8 @@ import { useProduct, useProductVariants, useProductImages } from "@/hooks/usePro
 import { useCart } from "@/hooks/useCart";
 import { useWishlist } from "@/hooks/useWishlist";
 import { useToast } from "@/hooks/use-toast";
+import KurtaCustomisation from "@/components/KurtaCustomisation";
+import WaitlistModal from "@/components/WaitlistModal";
 
 // Local image map
 import product1 from "@/assets/product-1.jpg";
@@ -19,7 +21,6 @@ import productKendrick from "@/assets/product-kendrick.png";
 import productOversizeGrey from "@/assets/product-oversize-grey.png";
 import productMastersUnion from "@/assets/product-masters-union.png";
 
-// Multiple images per product for carousel
 const productImagesMap: Record<string, string[]> = {
   "11111111-1111-1111-1111-111111111111": [product1, product2, product3],
   "22222222-2222-2222-2222-222222222222": [product2, product1, product4],
@@ -57,19 +58,25 @@ const ProductDetail = () => {
   const [isAdding, setIsAdding] = useState(false);
   const [currentImageIdx, setCurrentImageIdx] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [waitlistOpen, setWaitlistOpen] = useState(false);
+
+  // Customisation state
+  const [customisation, setCustomisation] = useState<{
+    enabled: boolean;
+    text: string;
+    language: "english" | "hindi";
+  }>({ enabled: false, text: "", language: "english" });
+
+  const customisationPrice = customisation.enabled ? 99 : 0;
+  const totalPrice = product ? product.price_inr + customisationPrice : 0;
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
 
-  // Build image list: DB images first, then fallback to local map
   const allImages: string[] = (() => {
-    if (dbImages.length > 0) {
-      return dbImages.map(img => img.image_url);
-    }
-    if (product && productImagesMap[product.id]) {
-      return productImagesMap[product.id];
-    }
+    if (dbImages.length > 0) return dbImages.map(img => img.image_url);
+    if (product && productImagesMap[product.id]) return productImagesMap[product.id];
     if (product) {
       const single = singleImageMap[product.id] || product.image_url || "/placeholder.svg";
       return [single];
@@ -77,15 +84,10 @@ const ProductDetail = () => {
     return ["/placeholder.svg"];
   })();
 
-  // Reset index when product changes
-  useEffect(() => {
-    setCurrentImageIdx(0);
-  }, [id]);
+  useEffect(() => { setCurrentImageIdx(0); }, [id]);
 
-  // Auto-rotate images
   useEffect(() => {
     if (allImages.length <= 1) return;
-
     const interval = setInterval(() => {
       setIsTransitioning(true);
       setTimeout(() => {
@@ -93,7 +95,6 @@ const ProductDetail = () => {
         setIsTransitioning(false);
       }, 300);
     }, AUTO_SLIDE_INTERVAL);
-
     return () => clearInterval(interval);
   }, [allImages.length]);
 
@@ -109,7 +110,10 @@ const ProductDetail = () => {
     if (!product) return;
     setIsAdding(true);
     await addToCart(product.id);
-    toast({ title: "Added to cart", description: `${product.name} has been added to your cart.` });
+    const customMsg = customisation.enabled && customisation.text.trim()
+      ? ` with sleeve embroidery "${customisation.text.trim()}"`
+      : "";
+    toast({ title: "Added to cart", description: `${product.name}${customMsg} has been added to your cart.` });
     setIsAdding(false);
   };
 
@@ -137,9 +141,7 @@ const ProductDetail = () => {
         <div className="flex flex-col items-center justify-center pt-40 pb-20">
           <h1 className="text-3xl font-semibold text-foreground mb-4">Product Not Found</h1>
           <p className="text-muted-foreground mb-8">The product you're looking for doesn't exist or has been removed.</p>
-          <Link to="/collection">
-            <Button>Browse Collection</Button>
-          </Link>
+          <Link to="/collection"><Button>Browse Collection</Button></Link>
         </div>
         <Footer />
       </div>
@@ -151,7 +153,6 @@ const ProductDetail = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-
       <main className="pt-28 pb-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           {/* Breadcrumb */}
@@ -174,8 +175,6 @@ const ProductDetail = () => {
                     isTransitioning ? "opacity-0 scale-[0.98]" : "opacity-100 scale-100"
                   }`}
                 />
-
-                {/* Navigation arrows */}
                 {allImages.length > 1 && (
                   <>
                     <button
@@ -194,8 +193,6 @@ const ProductDetail = () => {
                     </button>
                   </>
                 )}
-
-                {/* Image counter */}
                 {allImages.length > 1 && (
                   <div className="absolute bottom-3 right-3 px-3 py-1 text-xs bg-background/80 backdrop-blur-sm rounded-full text-foreground font-medium shadow-soft">
                     {currentImageIdx + 1} / {allImages.length}
@@ -203,7 +200,6 @@ const ProductDetail = () => {
                 )}
               </div>
 
-              {/* Thumbnail dots / progress indicators */}
               {allImages.length > 1 && (
                 <div className="flex justify-center gap-2">
                   {allImages.map((_, idx) => (
@@ -211,9 +207,7 @@ const ProductDetail = () => {
                       key={idx}
                       onClick={() => goToImage(idx)}
                       className={`h-1.5 rounded-full transition-all duration-300 ${
-                        idx === currentImageIdx
-                          ? "bg-primary w-8"
-                          : "bg-border w-4 hover:bg-muted-foreground"
+                        idx === currentImageIdx ? "bg-primary w-8" : "bg-border w-4 hover:bg-muted-foreground"
                       }`}
                       aria-label={`Go to image ${idx + 1}`}
                     />
@@ -221,7 +215,6 @@ const ProductDetail = () => {
                 </div>
               )}
 
-              {/* Thumbnail strip */}
               {allImages.length > 1 && (
                 <div className="flex gap-3 overflow-x-auto pb-1">
                   {allImages.map((img, idx) => (
@@ -229,9 +222,7 @@ const ProductDetail = () => {
                       key={idx}
                       onClick={() => goToImage(idx)}
                       className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-smooth ${
-                        idx === currentImageIdx
-                          ? "border-primary shadow-soft"
-                          : "border-transparent opacity-60 hover:opacity-100"
+                        idx === currentImageIdx ? "border-primary shadow-soft" : "border-transparent opacity-60 hover:opacity-100"
                       }`}
                     >
                       <img src={img} alt="" className="w-full h-full object-cover" />
@@ -253,9 +244,26 @@ const ProductDetail = () => {
                 {product.name}
               </h1>
 
-              <p className="text-2xl text-accent mb-6 tracking-wide font-medium">
-                ₹{product.price_inr.toLocaleString()}
-              </p>
+              {/* Dynamic pricing */}
+              <div className="mb-6">
+                {customisation.enabled ? (
+                  <div className="space-y-1">
+                    <p className="text-lg text-muted-foreground">
+                      Kurta: ₹{product.price_inr.toLocaleString()}
+                    </p>
+                    <p className="text-lg text-muted-foreground">
+                      Customisation: ₹{customisationPrice}
+                    </p>
+                    <p className="text-2xl text-accent font-medium tracking-wide">
+                      Total: ₹{totalPrice.toLocaleString()}
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-2xl text-accent tracking-wide font-medium">
+                    ₹{product.price_inr.toLocaleString()}
+                  </p>
+                )}
+              </div>
 
               {product.description && (
                 <div className="mb-6">
@@ -278,8 +286,9 @@ const ProductDetail = () => {
                 </div>
               )}
 
+              {/* Size Selection */}
               {!variantsLoading && variants.length > 0 && (
-                <div className="mb-8">
+                <div className="mb-6">
                   <h2 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-3">Select Size</h2>
                   <div className="flex flex-wrap gap-3">
                     {variants.map((v) => (
@@ -302,7 +311,23 @@ const ProductDetail = () => {
                 </div>
               )}
 
-              <div className="flex flex-col sm:flex-row gap-3 mb-8">
+              {/* Customisation */}
+              <KurtaCustomisation onCustomisationChange={setCustomisation} />
+
+              {/* Customisation Summary */}
+              {customisation.enabled && customisation.text.trim() && (
+                <div className="border border-accent/30 bg-accent/5 rounded-lg p-4 mb-6 animate-fade-in">
+                  <p className="text-xs uppercase tracking-wider font-medium text-accent mb-1">
+                    Customisation Summary
+                  </p>
+                  <p className="text-sm text-foreground">
+                    Sleeve Embroidery ({customisation.language === "hindi" ? "Hindi" : "English"}): <span className="font-medium text-accent">"{customisation.text.trim()}"</span>
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">+₹99 added to price</p>
+                </div>
+              )}
+
+              <div className="flex flex-col sm:flex-row gap-3 mb-4">
                 <Button
                   size="lg"
                   onClick={handleAddToCart}
@@ -310,21 +335,27 @@ const ProductDetail = () => {
                   className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90 font-normal tracking-wide"
                 >
                   {isAdding ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-                  Add to Cart
+                  Add to Cart — ₹{totalPrice.toLocaleString()}
                 </Button>
                 <Button
                   variant="outline"
                   size="lg"
                   onClick={handleWishlist}
                   className={`flex-1 font-light tracking-wide ${
-                    inWishlist
-                      ? "border-accent text-accent hover:bg-accent/10"
-                      : "border-border text-foreground hover:bg-muted"
+                    inWishlist ? "border-accent text-accent hover:bg-accent/10" : "border-border text-foreground hover:bg-muted"
                   }`}
                 >
                   {inWishlist ? "In Lookbook ♥" : "Add to Lookbook"}
                 </Button>
               </div>
+
+              {/* Waitlist button */}
+              <button
+                onClick={() => setWaitlistOpen(true)}
+                className="w-full py-3 rounded-sm border border-primary bg-background text-foreground font-sanchez text-sm tracking-wide hover:bg-secondary transition-smooth mb-8"
+              >
+                Join Waitlist for Next Drop
+              </button>
 
               {/* Trust Badges */}
               <div className="grid grid-cols-2 gap-4 pt-6 border-t border-border">
@@ -362,6 +393,7 @@ const ProductDetail = () => {
         </div>
       </main>
 
+      <WaitlistModal isOpen={waitlistOpen} onClose={() => setWaitlistOpen(false)} productId={id} />
       <Footer />
     </div>
   );
