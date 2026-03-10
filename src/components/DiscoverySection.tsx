@@ -1,12 +1,9 @@
-import { useState, useMemo, useEffect, useRef, useCallback } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import MasonryGrid from "./MasonryGrid";
 import DiscoveryCard, { DiscoveryCardData } from "./DiscoveryCard";
 import CardModal from "./CardModal";
-import { Button } from "@/components/ui/button";
-import { useProducts } from "@/hooks/useProducts";
-import { useCart } from "@/hooks/useCart";
-import { useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 // Local images
 import mosaic1 from "@/assets/mosaic-1.jpg";
@@ -22,29 +19,11 @@ import story1 from "@/assets/story-1.jpg";
 import story2 from "@/assets/story-2.jpg";
 import story3 from "@/assets/story-3.jpg";
 import story4 from "@/assets/story-4.jpg";
-import product1 from "@/assets/product-1.jpg";
-import product2 from "@/assets/product-2.jpg";
-import product3 from "@/assets/product-3.jpg";
-import product4 from "@/assets/product-4.jpg";
-import productFormalCollar from "@/assets/product-formal-collar.png";
-import productKendrick from "@/assets/product-kendrick.png";
-import productOversizeGrey from "@/assets/product-oversize-grey.png";
-import productMastersUnion from "@/assets/product-masters-union.png";
-
-const imageMap: Record<string, string> = {
-  "11111111-1111-1111-1111-111111111111": product1,
-  "22222222-2222-2222-2222-222222222222": product2,
-  "33333333-3333-3333-3333-333333333333": product3,
-  "44444444-4444-4444-4444-444444444444": product4,
-  "55555555-5555-5555-5555-555555555555": productFormalCollar,
-  "66666666-6666-6666-6666-666666666666": productKendrick,
-  "77777777-7777-7777-7777-777777777777": productOversizeGrey,
-  "88888888-8888-8888-8888-888888888888": productMastersUnion,
-};
+import { Button } from "@/components/ui/button";
 
 const BATCH_SIZE = 6;
 
-// Static editorial/philosophy/inspiration cards
+// Only editorial/brand content cards — NO products
 const editorialCards: DiscoveryCardData[] = [
   {
     id: "phil-1",
@@ -156,7 +135,6 @@ const editorialCards: DiscoveryCardData[] = [
     description: "The half kurta was once reserved for festivals. Today it's for Monday meetings, Saturday brunch, and Sunday adventures. We're part of a quiet revolution in Indian menswear.",
     height: "short",
   },
-  // Additional cards for infinite-scroll feel
   {
     id: "phil-3",
     type: "philosophy",
@@ -196,47 +174,14 @@ const editorialCards: DiscoveryCardData[] = [
 ];
 
 const DiscoverySection = () => {
-  const { products } = useProducts(true);
-  const { addToCart } = useCart();
   const navigate = useNavigate();
   const [selectedCard, setSelectedCard] = useState<DiscoveryCardData | null>(null);
   const [visibleCount, setVisibleCount] = useState(BATCH_SIZE);
   const [loadingMore, setLoadingMore] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
-  // Merge product cards with editorial cards
-  const allCards = useMemo(() => {
-    const productCards: DiscoveryCardData[] = products.slice(0, 4).map((p, i) => ({
-      id: `prod-${p.id}`,
-      type: "product" as const,
-      image: imageMap[p.id] || p.image_url || "/placeholder.svg",
-      title: p.name,
-      subtitle: p.style || undefined,
-      description: p.description || "",
-      price: `₹${p.price_inr.toLocaleString()}`,
-      fabric: p.fabric || "",
-      height: (["medium", "tall", "short", "medium"] as const)[i % 4],
-      productId: p.id,
-    }));
-
-    const merged: DiscoveryCardData[] = [];
-    let prodIdx = 0;
-    editorialCards.forEach((card, i) => {
-      merged.push(card);
-      if ((i + 1) % 3 === 0 && prodIdx < productCards.length) {
-        merged.push(productCards[prodIdx]);
-        prodIdx++;
-      }
-    });
-    while (prodIdx < productCards.length) {
-      merged.push(productCards[prodIdx]);
-      prodIdx++;
-    }
-    return merged;
-  }, [products]);
-
-  const visibleCards = allCards.slice(0, visibleCount);
-  const hasMore = visibleCount < allCards.length;
+  const visibleCards = editorialCards.slice(0, visibleCount);
+  const hasMore = visibleCount < editorialCards.length;
 
   // IntersectionObserver for infinite scroll
   useEffect(() => {
@@ -246,9 +191,8 @@ const DiscoverySection = () => {
       (entries) => {
         if (entries[0].isIntersecting && !loadingMore) {
           setLoadingMore(true);
-          // Simulate a small delay for smooth loading feel
           setTimeout(() => {
-            setVisibleCount((prev) => Math.min(prev + BATCH_SIZE, allCards.length));
+            setVisibleCount((prev) => Math.min(prev + BATCH_SIZE, editorialCards.length));
             setLoadingMore(false);
           }, 400);
         }
@@ -258,11 +202,7 @@ const DiscoverySection = () => {
 
     observer.observe(sentinelRef.current);
     return () => observer.disconnect();
-  }, [hasMore, loadingMore, allCards.length]);
-
-  const handleAddToCart = async (productId: string) => {
-    await addToCart(productId);
-  };
+  }, [hasMore, loadingMore]);
 
   return (
     <section className="py-20 lg:py-28 bg-background">
@@ -272,7 +212,7 @@ const DiscoverySection = () => {
             Discover Kalāteet
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed font-light">
-            Explore our world of modern Indian identity — clothing, craft, culture, and stories.
+            Stories, craft, culture — the world behind every thread.
           </p>
           <div className="w-20 h-0.5 bg-accent mx-auto mt-8" />
         </div>
@@ -287,7 +227,6 @@ const DiscoverySection = () => {
           ))}
         </MasonryGrid>
 
-        {/* Infinite scroll sentinel */}
         {hasMore && (
           <div ref={sentinelRef} className="flex justify-center py-12">
             {loadingMore && (
@@ -305,18 +244,11 @@ const DiscoverySection = () => {
           title={selectedCard.title}
         >
           <div className="overflow-hidden rounded-2xl">
-            {/* Image — use object-contain for products to avoid cropping */}
-            <div className={`relative w-full overflow-hidden ${
-              selectedCard.type === "product" ? "bg-muted flex items-center justify-center" : ""
-            }`}>
+            <div className="relative w-full overflow-hidden">
               <img
                 src={selectedCard.image}
                 alt={selectedCard.title}
-                className={`w-full ${
-                  selectedCard.type === "product"
-                    ? "max-h-[60vh] object-contain"
-                    : "max-h-[50vh] object-cover"
-                }`}
+                className="w-full max-h-[50vh] object-cover"
               />
               {selectedCard.category && (
                 <span className="absolute top-4 left-4 px-3 py-1 text-xs uppercase tracking-wider font-medium bg-background/80 backdrop-blur-sm text-foreground rounded-full">
@@ -325,7 +257,6 @@ const DiscoverySection = () => {
               )}
             </div>
 
-            {/* Content */}
             <div className="p-8 lg:p-10">
               <h2 className="text-2xl lg:text-3xl font-semibold text-foreground mb-2 tracking-wide">
                 {selectedCard.title}
@@ -333,44 +264,11 @@ const DiscoverySection = () => {
               {selectedCard.subtitle && (
                 <p className="text-accent text-sm mb-4">{selectedCard.subtitle}</p>
               )}
-              {selectedCard.price && (
-                <p className="text-2xl text-accent mb-4 font-medium tracking-wide">
-                  {selectedCard.price}
-                </p>
-              )}
               <p className="text-muted-foreground leading-relaxed mb-6">
                 {selectedCard.description}
               </p>
-              {selectedCard.fabric && (
-                <div className="mb-6">
-                  <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-1">
-                    Fabric & Care
-                  </h3>
-                  <p className="text-muted-foreground text-sm">{selectedCard.fabric}</p>
-                </div>
-              )}
 
-              {/* CTAs */}
               <div className="flex flex-col sm:flex-row gap-3">
-                {selectedCard.type === "product" && selectedCard.productId && (
-                  <>
-                    <Button
-                      size="lg"
-                      onClick={() => handleAddToCart(selectedCard.productId!)}
-                      className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90 font-normal tracking-wide"
-                    >
-                      Add to Cart
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="lg"
-                      onClick={() => { setSelectedCard(null); navigate(`/product/${selectedCard.productId}`); }}
-                      className="flex-1 font-light tracking-wide border-border text-foreground hover:bg-muted"
-                    >
-                      View Details
-                    </Button>
-                  </>
-                )}
                 {selectedCard.type === "blog" && (
                   <Button
                     variant="outline"

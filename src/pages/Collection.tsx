@@ -6,9 +6,9 @@ import CardModal from "@/components/CardModal";
 import { Button } from "@/components/ui/button";
 import { useProducts, Product } from "@/hooks/useProducts";
 import { useCart } from "@/hooks/useCart";
-import { useWishlist } from "@/hooks/useWishlist";
 import { Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import WaitlistModal from "@/components/WaitlistModal";
 
 import product1 from "@/assets/product-1.jpg";
 import product2 from "@/assets/product-2.jpg";
@@ -44,12 +44,13 @@ const filters: { label: string; value: FilterStyle }[] = [
 const tileHeights = ["aspect-[3/4]", "aspect-[2/3]", "aspect-[4/5]", "aspect-square", "aspect-[3/4]", "aspect-[2/3]", "aspect-[4/5]", "aspect-[3/5]"];
 
 const Collection = () => {
-  const { products, loading } = useProducts(false); // all products
+  const { products, loading } = useProducts(false);
   const [activeFilter, setActiveFilter] = useState<FilterStyle>("all");
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const { addToCart } = useCart();
-  const { toggleWishlist, isInWishlist } = useWishlist();
   const navigate = useNavigate();
+  const [waitlistOpen, setWaitlistOpen] = useState(false);
+  const [waitlistProductId, setWaitlistProductId] = useState<string | undefined>();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -72,6 +73,11 @@ const Collection = () => {
 
   const getImage = (p: Product) => imageMap[p.id] || p.image_url || "/placeholder.svg";
 
+  const openWaitlist = (productId: string) => {
+    setWaitlistProductId(productId);
+    setWaitlistOpen(true);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -92,7 +98,6 @@ const Collection = () => {
       {/* Filters + Grid */}
       <section className="py-12 lg:py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Filter Buttons */}
           <div className="flex flex-wrap justify-center gap-3 mb-14">
             {filters.map((filter) => (
               <button
@@ -120,7 +125,7 @@ const Collection = () => {
               {filteredProducts.map((product, index) => (
                 <div
                   key={product.id}
-                  className="group cursor-pointer rounded-2xl overflow-hidden shadow-soft hover:shadow-large transition-smooth"
+                  className="group cursor-pointer rounded-2xl overflow-hidden shadow-soft hover:shadow-large hover:-translate-y-1 transition-all duration-500 ease-out"
                   onClick={() => setSelectedProduct(product)}
                 >
                   <div className={`relative overflow-hidden ${tileHeights[index % tileHeights.length]} bg-muted`}>
@@ -128,9 +133,9 @@ const Collection = () => {
                       src={getImage(product)}
                       alt={`${product.name} - Kalateet kurta`}
                       loading="lazy"
-                      className="w-full h-full object-cover group-hover:scale-[1.02] transition-gentle"
+                      className="w-full h-full object-cover group-hover:scale-[1.03] transition-all duration-700 ease-out"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
                     <div className="absolute bottom-0 left-0 right-0 p-4">
                       <h3 className="text-white font-semibold text-sm leading-tight mb-0.5">
                         {product.name}
@@ -196,10 +201,22 @@ const Collection = () => {
                   View Full Details →
                 </Button>
               </div>
+              <button
+                onClick={() => openWaitlist(selectedProduct.id)}
+                className="w-full mt-3 py-3 rounded-sm border border-primary bg-background text-foreground font-sanchez text-sm tracking-wide hover:bg-secondary transition-smooth"
+              >
+                Join Waitlist for Next Drop
+              </button>
             </div>
           </div>
         </CardModal>
       )}
+
+      <WaitlistModal
+        isOpen={waitlistOpen}
+        onClose={() => setWaitlistOpen(false)}
+        productId={waitlistProductId}
+      />
 
       <Footer />
     </div>
