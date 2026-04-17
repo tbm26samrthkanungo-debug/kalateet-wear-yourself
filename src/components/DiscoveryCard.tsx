@@ -40,11 +40,11 @@ const DiscoveryCard = ({ card, onClick }: DiscoveryCardProps) => {
 
   return (
     <div
-      className="group cursor-pointer rounded-2xl overflow-hidden shadow-soft hover:shadow-large transition-smooth relative"
+      className="group cursor-pointer rounded-2xl overflow-hidden shadow-soft hover:shadow-large transition-smooth relative h-full"
       style={{ transform: "translateZ(0)" }}
       onClick={() => onClick(card)}
     >
-      <div className={`relative overflow-hidden ${heightMap[card.height || "medium"]} bg-muted`}>
+      <div className="relative overflow-hidden h-full w-full bg-muted">
         {/* Progressive image loading */}
         {!imageLoaded && (
           <div className="absolute inset-0 bg-muted animate-pulse" />
