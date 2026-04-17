@@ -180,8 +180,8 @@ const DiscoverySection = () => {
   const [loadingMore, setLoadingMore] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
-  const visibleCards = editorialCards.slice(0, visibleCount);
-  const hasMore = visibleCount < editorialCards.length;
+  const visibleCards = editorialCards.slice(0, 6);
+  const hasMore = false;
 
   // IntersectionObserver for infinite scroll
   useEffect(() => {
