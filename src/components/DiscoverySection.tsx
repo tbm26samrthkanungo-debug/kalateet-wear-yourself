@@ -217,23 +217,16 @@ const DiscoverySection = () => {
           <div className="w-20 h-0.5 bg-accent mx-auto mt-8" />
         </div>
 
-        <MasonryGrid columns={4} mobileColumns={1} gap={16}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {visibleCards.map((card) => (
-            <DiscoveryCard
-              key={card.id}
-              card={card}
-              onClick={setSelectedCard}
-            />
+            <div key={card.id} className="aspect-[4/5]">
+              <DiscoveryCard
+                card={{ ...card, height: "medium" }}
+                onClick={setSelectedCard}
+              />
+            </div>
           ))}
-        </MasonryGrid>
-
-        {hasMore && (
-          <div ref={sentinelRef} className="flex justify-center py-12">
-            {loadingMore && (
-              <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
-            )}
-          </div>
-        )}
+        </div>
       </div>
 
       {/* Card Modal */}
