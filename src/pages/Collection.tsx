@@ -12,7 +12,8 @@ import {
 } from "@/components/ui/select";
 import { useProducts, Product } from "@/hooks/useProducts";
 import { useCart } from "@/hooks/useCart";
-import { Loader2 } from "lucide-react";
+import { Loader2, Heart } from "lucide-react";
+import { useWishlist } from "@/hooks/useWishlist";
 import { useNavigate } from "react-router-dom";
 import WaitlistModal from "@/components/WaitlistModal";
 
