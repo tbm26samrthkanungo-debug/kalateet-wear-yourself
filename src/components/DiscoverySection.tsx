@@ -217,7 +217,7 @@ const DiscoverySection = () => {
           <div className="w-16 h-0.5 bg-accent mx-auto mt-4" />
         </div>
 
-        <div className="grid grid-cols-3 lg:grid-cols-5 auto-rows-[80px] sm:auto-rows-[90px] lg:auto-rows-[100px] gap-2 grid-flow-dense">
+        <div className="grid grid-cols-3 sm:grid-cols-5 auto-rows-[70px] sm:auto-rows-[85px] lg:auto-rows-[100px] gap-2 grid-flow-dense">
           {visibleCards.map((card, idx) => {
             // Desktop: 5 cols × 4 rows. 4 tall (1col×4row) + 2 short (1col×2row stacked) = 5 cols, no gaps.
             const spanPatterns = [
