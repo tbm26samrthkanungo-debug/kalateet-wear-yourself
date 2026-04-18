@@ -217,25 +217,16 @@ const DiscoverySection = () => {
           <div className="w-16 h-0.5 bg-accent mx-auto mt-4" />
         </div>
 
-        <div className="grid grid-cols-4 lg:grid-cols-8 auto-rows-[60px] sm:auto-rows-[70px] lg:auto-rows-[80px] gap-2 grid-flow-dense">
+        <div className="grid grid-cols-3 lg:grid-cols-5 auto-rows-[80px] sm:auto-rows-[90px] lg:auto-rows-[100px] gap-2 grid-flow-dense">
           {visibleCards.map((card, idx) => {
-            // 6 cards filling a 4-col (mobile) / 8-col (desktop) × 4-row grid with no gaps.
-            // 4 tall cards (col-span-2, row-span-4) + 2 short cards (col-span-2, row-span-2 stacked pair... )
-            // Better: 2 tall (span 4 rows) + 4 short stacked into 2 columns of pairs.
-            // Layout (8 cols × 4 rows desktop):
-            //  [Philosophy tall 2x4][Chikankari short 2x2][Campus tall 2x4][BlockPrint tall 2x4]
-            //                       [Blog short 2x2 below Chikankari]
-            //  Wait — only 6 cards. Use: 4 tall + 2 short stacked in one column.
-            // Final: tall, tall, [short+short stacked = 1 col], tall, tall  → 5 col-units. Need 4 or 8.
-            // Use 4 tall (2 cols each) on mobile=8 cols total, but we have 6 cards.
-            // Cleanest: all 6 cards same size — 3 cols × 2 rows, each col-span-1 row-span-2.
+            // Desktop: 5 cols × 4 rows. 4 tall (1col×4row) + 2 short (1col×2row stacked) = 5 cols, no gaps.
             const spanPatterns = [
-              "col-span-2 row-span-4", // Philosophy - tall
-              "col-span-2 row-span-2", // Chikankari - short (top)
-              "col-span-2 row-span-4", // Campus - tall
-              "col-span-2 row-span-4", // Block Print - tall
-              "col-span-2 row-span-2", // Blog - short (fills below Chikankari via grid-flow-dense)
-              "col-span-2 row-span-4", // Coffee Date - tall
+              "col-span-1 row-span-4", // Philosophy tall
+              "col-span-1 row-span-2", // Chikankari short
+              "col-span-1 row-span-4", // Campus tall
+              "col-span-1 row-span-4", // Block Print tall
+              "col-span-1 row-span-2", // Blog short (stacks under Chikankari)
+              "col-span-1 row-span-4", // Coffee Date tall
             ];
             return (
               <div key={card.id} className={spanPatterns[idx % spanPatterns.length]}>
