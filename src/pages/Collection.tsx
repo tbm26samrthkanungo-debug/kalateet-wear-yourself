@@ -86,7 +86,7 @@ const Collection = () => {
         sorted.sort((a, b) => b.price_inr - a.price_inr);
         break;
       case "newest":
-        sorted.sort((a, b) => (b.created_at || "").localeCompare(a.created_at || ""));
+        // No created_at on Product type — fall back to original order (assumed newest-first from query)
         break;
       case "featured":
       default:
