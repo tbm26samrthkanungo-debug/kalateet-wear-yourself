@@ -69,6 +69,11 @@ const Header = () => {
               >
                 <Search className="h-5 w-5" />
               </button>
+              <Link to="/wishlist">
+                <Button variant="ghost" size="icon" aria-label="Wishlist">
+                  <Heart className="h-5 w-5" />
+                </Button>
+              </Link>
               <Link to="/cart">
                 <Button variant="ghost" size="icon" className="relative">
                   <ShoppingBag className="h-5 w-5" />
