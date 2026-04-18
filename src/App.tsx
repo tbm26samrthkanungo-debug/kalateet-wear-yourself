@@ -13,6 +13,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
 import Cart from "./pages/Cart";
+import Wishlist from "./pages/Wishlist";
 import Blog from "./pages/Blog";
 import NotFound from "./pages/NotFound";
 
