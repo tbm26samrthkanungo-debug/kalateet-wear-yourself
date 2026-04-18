@@ -217,16 +217,17 @@ const DiscoverySection = () => {
           <div className="w-16 h-0.5 bg-accent mx-auto mt-4" />
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 auto-rows-[80px] sm:auto-rows-[90px] lg:auto-rows-[100px] gap-2">
+        <div className="grid grid-cols-3 lg:grid-cols-6 auto-rows-[70px] sm:auto-rows-[80px] lg:auto-rows-[90px] gap-2 grid-flow-dense">
           {visibleCards.map((card, idx) => {
-            // Mixed sizes for compact, uniform-but-varied layout
+            // Tall cards span 4 rows, short cards span 2 (shorts pair to fill same height)
+            // Order: Philosophy(tall), Chikankari(short), Campus(tall), BlockPrint(tall), Blog(short), Coffee(tall)
             const spanPatterns = [
-              "col-span-1 row-span-2",      // tall
-              "col-span-1 row-span-2",      // tall
-              "col-span-2 row-span-2 lg:col-span-2 lg:row-span-2", // big square
-              "col-span-1 row-span-2",      // tall
-              "col-span-1 row-span-2",      // tall
-              "col-span-2 row-span-2 lg:col-span-2 lg:row-span-2", // big square
+              "col-span-1 row-span-4",
+              "col-span-1 row-span-2",
+              "col-span-1 row-span-4",
+              "col-span-1 row-span-4",
+              "col-span-1 row-span-2",
+              "col-span-1 row-span-4",
             ];
             return (
               <div key={card.id} className={spanPatterns[idx % spanPatterns.length]}>
