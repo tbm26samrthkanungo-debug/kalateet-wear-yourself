@@ -217,19 +217,21 @@ const DiscoverySection = () => {
           <div className="w-16 h-0.5 bg-accent mx-auto mt-4" />
         </div>
 
-        <div className="grid grid-cols-3 sm:grid-cols-5 auto-rows-[70px] sm:auto-rows-[85px] lg:auto-rows-[100px] gap-2 grid-flow-dense">
+        {/* Editorial grid: every column spans exactly 4 rows.
+            Tall cards = row-span-4 (full column). Short cards = row-span-2 (stack 2 per column).
+            Result: identical top & bottom baseline across all columns. */}
+        <div className="grid grid-cols-2 sm:grid-cols-5 grid-rows-4 auto-rows-fr h-[420px] sm:h-[360px] lg:h-[440px] gap-2">
           {visibleCards.map((card, idx) => {
-            // Desktop: 5 cols × 4 rows. 4 tall (1col×4row) + 2 short (1col×2row stacked) = 5 cols, no gaps.
             const spanPatterns = [
-              "col-span-1 row-span-4", // Philosophy tall
-              "col-span-1 row-span-2", // Chikankari short
-              "col-span-1 row-span-4", // Campus tall
-              "col-span-1 row-span-4", // Block Print tall
-              "col-span-1 row-span-2", // Blog short (stacks under Chikankari)
-              "col-span-1 row-span-4", // Coffee Date tall
+              "row-span-4", // 0 Philosophy — tall
+              "row-span-2", // 1 Chikankari — short (top of stacked column)
+              "row-span-4", // 2 Campus — tall
+              "row-span-4", // 3 Block Print — tall
+              "row-span-2", // 4 Blog — short (bottom of stacked column)
+              "row-span-4", // 5 Coffee Date — tall
             ];
             return (
-              <div key={card.id} className={spanPatterns[idx % spanPatterns.length]}>
+              <div key={card.id} className={spanPatterns[idx]}>
                 <DiscoveryCard
                   card={{ ...card, height: "medium" }}
                   onClick={setSelectedCard}
