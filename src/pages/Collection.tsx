@@ -55,6 +55,7 @@ const Collection = () => {
   const [sortBy, setSortBy] = useState<SortOption>("featured");
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const { addToCart } = useCart();
+  const { isInWishlist, toggleWishlist } = useWishlist();
   const navigate = useNavigate();
   const [waitlistOpen, setWaitlistOpen] = useState(false);
   const [waitlistProductId, setWaitlistProductId] = useState<string | undefined>();
