@@ -205,19 +205,19 @@ const DiscoverySection = () => {
   }, [hasMore, loadingMore]);
 
   return (
-    <section className="py-20 lg:py-28 bg-background">
+    <section className="py-12 lg:py-16 bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl lg:text-5xl font-normal text-foreground mb-6 tracking-wide">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl lg:text-4xl font-normal text-foreground mb-3 tracking-wide">
             Discover Kalāteet
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed font-light">
+          <p className="text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed font-light">
             Stories, craft, culture — the world behind every thread.
           </p>
-          <div className="w-20 h-0.5 bg-accent mx-auto mt-8" />
+          <div className="w-16 h-0.5 bg-accent mx-auto mt-4" />
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 auto-rows-[120px] sm:auto-rows-[140px] lg:auto-rows-[160px] gap-3">
+        <div className="grid grid-cols-2 lg:grid-cols-4 auto-rows-[80px] sm:auto-rows-[90px] lg:auto-rows-[100px] gap-2">
           {visibleCards.map((card, idx) => {
             // Mixed sizes for compact, uniform-but-varied layout
             const spanPatterns = [
