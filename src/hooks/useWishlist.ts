@@ -52,33 +52,41 @@ export const useWishlist = () => {
     }
 
     const existing = wishlistItems.find(item => item.product_id === productId);
-    
+    const previous = wishlistItems;
+
     if (existing) {
-      // Remove from wishlist
+      // Optimistic remove
+      setWishlistItems(prev => prev.filter(i => i.id !== existing.id));
       const { error } = await supabase
         .from("wishlist_items")
         .delete()
         .eq("id", existing.id);
-      
+
       if (error) {
+        setWishlistItems(previous);
         toast({ title: "Error", description: "Failed to remove from wishlist", variant: "destructive" });
         return false;
       }
       toast({ title: "Removed", description: "Item removed from wishlist" });
     } else {
-      // Add to wishlist
-      const { error } = await supabase
+      // Optimistic add (temp id)
+      const tempId = `temp-${productId}`;
+      setWishlistItems(prev => [...prev, { id: tempId, product_id: productId }]);
+      const { data, error } = await supabase
         .from("wishlist_items")
-        .insert({ user_id: user.id, product_id: productId });
-      
+        .insert({ user_id: user.id, product_id: productId })
+        .select("id, product_id")
+        .single();
+
       if (error) {
+        setWishlistItems(previous);
         toast({ title: "Error", description: "Failed to add to wishlist", variant: "destructive" });
         return false;
       }
+      setWishlistItems(prev => prev.map(i => (i.id === tempId ? data : i)));
       toast({ title: "Added", description: "Item added to wishlist" });
     }
 
-    await fetchWishlist();
     return true;
   };
 
