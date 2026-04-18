@@ -217,15 +217,26 @@ const DiscoverySection = () => {
           <div className="w-20 h-0.5 bg-accent mx-auto mt-8" />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {visibleCards.map((card) => (
-            <div key={card.id} className="aspect-[4/5]">
-              <DiscoveryCard
-                card={{ ...card, height: "medium" }}
-                onClick={setSelectedCard}
-              />
-            </div>
-          ))}
+        <div className="grid grid-cols-2 lg:grid-cols-4 auto-rows-[120px] sm:auto-rows-[140px] lg:auto-rows-[160px] gap-3">
+          {visibleCards.map((card, idx) => {
+            // Mixed sizes for compact, uniform-but-varied layout
+            const spanPatterns = [
+              "col-span-1 row-span-2",      // tall
+              "col-span-1 row-span-2",      // tall
+              "col-span-2 row-span-2 lg:col-span-2 lg:row-span-2", // big square
+              "col-span-1 row-span-2",      // tall
+              "col-span-1 row-span-2",      // tall
+              "col-span-2 row-span-2 lg:col-span-2 lg:row-span-2", // big square
+            ];
+            return (
+              <div key={card.id} className={spanPatterns[idx % spanPatterns.length]}>
+                <DiscoveryCard
+                  card={{ ...card, height: "medium" }}
+                  onClick={setSelectedCard}
+                />
+              </div>
+            );
+          })}
         </div>
       </div>
 
