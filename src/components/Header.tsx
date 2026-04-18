@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Menu, X, ShoppingBag, Search } from "lucide-react";
+import { Menu, X, ShoppingBag, Search, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import kalateeLogo from "@/assets/kalateet-logo.png";
 import SearchOverlay from "./SearchOverlay";
@@ -69,6 +69,11 @@ const Header = () => {
               >
                 <Search className="h-5 w-5" />
               </button>
+              <Link to="/wishlist">
+                <Button variant="ghost" size="icon" aria-label="Wishlist">
+                  <Heart className="h-5 w-5" />
+                </Button>
+              </Link>
               <Link to="/cart">
                 <Button variant="ghost" size="icon" className="relative">
                   <ShoppingBag className="h-5 w-5" />
@@ -85,6 +90,11 @@ const Header = () => {
               >
                 <Search className="h-5 w-5" />
               </button>
+              <Link to="/wishlist">
+                <Button variant="ghost" size="icon" aria-label="Wishlist">
+                  <Heart className="h-5 w-5" />
+                </Button>
+              </Link>
               <Link to="/cart">
                 <Button variant="ghost" size="icon">
                   <ShoppingBag className="h-5 w-5" />

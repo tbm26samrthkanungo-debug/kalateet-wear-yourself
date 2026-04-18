@@ -12,7 +12,8 @@ import {
 } from "@/components/ui/select";
 import { useProducts, Product } from "@/hooks/useProducts";
 import { useCart } from "@/hooks/useCart";
-import { Loader2 } from "lucide-react";
+import { Loader2, Heart } from "lucide-react";
+import { useWishlist } from "@/hooks/useWishlist";
 import { useNavigate } from "react-router-dom";
 import WaitlistModal from "@/components/WaitlistModal";
 
@@ -54,6 +55,7 @@ const Collection = () => {
   const [sortBy, setSortBy] = useState<SortOption>("featured");
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const { addToCart } = useCart();
+  const { isInWishlist, toggleWishlist } = useWishlist();
   const navigate = useNavigate();
   const [waitlistOpen, setWaitlistOpen] = useState(false);
   const [waitlistProductId, setWaitlistProductId] = useState<string | undefined>();
@@ -200,6 +202,24 @@ const Collection = () => {
                       loading="lazy"
                       className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
                     />
+
+                    {/* Wishlist heart */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleWishlist(product.id);
+                      }}
+                      aria-label={isInWishlist(product.id) ? "Remove from wishlist" : "Add to wishlist"}
+                      className="absolute top-3 right-3 w-9 h-9 rounded-full bg-background/90 backdrop-blur-sm flex items-center justify-center shadow-soft hover:bg-background transition opacity-90 hover:opacity-100"
+                    >
+                      <Heart
+                        className={`w-4 h-4 transition-colors ${
+                          isInWishlist(product.id)
+                            ? "fill-primary text-primary"
+                            : "text-foreground"
+                        }`}
+                      />
+                    </button>
 
                     {/* Slide-up CTA */}
                     <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out">
