@@ -220,25 +220,16 @@ const DiscoverySection = () => {
         {/* Editorial grid: every column spans exactly 4 rows.
             Tall cards = row-span-4 (full column). Short cards = row-span-2 (stack 2 per column).
             Result: identical top & bottom baseline across all columns. */}
-        <div className="grid grid-cols-2 sm:grid-cols-5 grid-rows-4 auto-rows-fr h-[420px] sm:h-[360px] lg:h-[440px] gap-2">
-          {visibleCards.map((card, idx) => {
-            const spanPatterns = [
-              "row-span-4", // 0 Philosophy — tall
-              "row-span-2", // 1 Chikankari — short (top of stacked column)
-              "row-span-4", // 2 Campus — tall
-              "row-span-4", // 3 Block Print — tall
-              "row-span-2", // 4 Blog — short (bottom of stacked column)
-              "row-span-4", // 5 Coffee Date — tall
-            ];
-            return (
-              <div key={card.id} className={spanPatterns[idx]}>
-                <DiscoveryCard
-                  card={{ ...card, height: "medium" }}
-                  onClick={setSelectedCard}
-                />
-              </div>
-            );
-          })}
+        {/* Editorial grid: 5 columns × 2 rows on desktop, all cards equal height — no gaps, perfect alignment. */}
+        <div className="grid grid-cols-2 sm:grid-cols-5 grid-rows-2 sm:grid-rows-2 h-[420px] sm:h-[360px] lg:h-[440px] gap-2">
+          {visibleCards.map((card) => (
+            <div key={card.id} className="row-span-1">
+              <DiscoveryCard
+                card={{ ...card, height: "medium" }}
+                onClick={setSelectedCard}
+              />
+            </div>
+          ))}
         </div>
       </div>
 
