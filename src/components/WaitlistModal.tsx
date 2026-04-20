@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -67,7 +67,6 @@ const WaitlistModal = ({ isOpen, onClose, productId }: WaitlistModalProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogOverlay className="bg-black/50 backdrop-blur-sm" />
       <DialogContent className="max-w-md p-0 gap-0 bg-card rounded-2xl border border-border shadow-large overflow-hidden">
         <DialogTitle className="sr-only">Join Waitlist</DialogTitle>
 
