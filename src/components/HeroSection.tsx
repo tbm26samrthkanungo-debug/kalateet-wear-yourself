@@ -30,7 +30,7 @@ const HeroSection = () => {
             <img
               src={kalateetBanner}
               alt="Kalateet — A Doorway to Yourself"
-              className="w-[280px] sm:w-[400px] lg:w-[520px] h-auto mx-auto mb-6 mix-blend-multiply drop-shadow-sm"
+              className="w-[280px] sm:w-[400px] lg:w-[520px] h-auto mx-auto mb-6"
             />
 
             <p className="text-base sm:text-lg lg:text-xl text-foreground/70 max-w-2xl mx-auto mb-12 font-light leading-relaxed tracking-wide">
