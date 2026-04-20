@@ -27,9 +27,7 @@ const HeroSection = () => {
         <div className="absolute inset-x-0 bottom-0 z-10 px-4 sm:px-6 lg:px-8 pb-6 sm:pb-10 lg:pb-14">
           <div className="flex flex-col items-center text-center animate-fade-in">
             <p className="text-sm sm:text-base lg:text-lg text-cream max-w-2xl mx-auto mb-5 sm:mb-7 font-light leading-relaxed tracking-wide drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">
-              Not just clothing. Kalateet is a ritual of self-expression.
-              <br className="hidden sm:block" />
-              Choose fabric, not trends.
+              {" "}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
