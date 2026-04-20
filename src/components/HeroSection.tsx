@@ -11,7 +11,7 @@ const HeroSection = () => {
   return (
     <section
       id="home"
-      className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden bg-cream"
+      className="relative flex items-center justify-center pt-24 pb-12 lg:pt-28 lg:pb-16 overflow-hidden bg-cream"
     >
       {/* Subtle grain texture overlay */}
       <div
@@ -33,7 +33,7 @@ const HeroSection = () => {
               className="w-[280px] sm:w-[400px] lg:w-[520px] h-auto mx-auto mb-6"
             />
 
-            <p className="text-base sm:text-lg lg:text-xl text-foreground/70 max-w-2xl mx-auto mb-12 font-light leading-relaxed tracking-wide">
+            <p className="text-base sm:text-lg lg:text-xl text-foreground/70 max-w-2xl mx-auto mb-8 font-light leading-relaxed tracking-wide">
               Not just clothing. Kalateet is a ritual of self-expression.
               <br />
               Choose fabric, not trends.
@@ -61,12 +61,6 @@ const HeroSection = () => {
         </div>
       </div>
 
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 animate-hover-float">
-        <div className="text-xs uppercase tracking-wider text-foreground/50 font-light">
-          Scroll
-        </div>
-      </div>
 
       <WaitlistModal isOpen={waitlistOpen} onClose={() => setWaitlistOpen(false)} />
     </section>

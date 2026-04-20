@@ -76,7 +76,7 @@ const ProductShowcase = () => {
   };
 
   return (
-    <section id="products" className="py-24 lg:py-32 bg-background">
+    <section id="products" className="py-12 lg:py-16 bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-20">
           <h2 className="text-4xl lg:text-5xl font-normal text-foreground mb-6 tracking-wide">
