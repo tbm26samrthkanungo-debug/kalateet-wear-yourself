@@ -108,8 +108,12 @@ const ProductDetail = () => {
 
   const handleAddToCart = async () => {
     if (!product) return;
+    if (!selectedSize) {
+      toast({ title: "Select a size", description: "Please choose a size first.", variant: "destructive" });
+      return;
+    }
     setIsAdding(true);
-    await addToCart(product.id);
+    await addToCart(product.id, selectedSize);
     const customMsg = customisation.enabled && customisation.text.trim()
       ? ` with sleeve embroidery "${customisation.text.trim()}"`
       : "";
