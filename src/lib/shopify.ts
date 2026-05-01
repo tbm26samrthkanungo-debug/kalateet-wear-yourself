@@ -19,6 +19,12 @@ export const HANDLE_TO_LEGACY_ID: Record<string, string> = {
   "kendrick-statement-kurta": "66666666-6666-6666-6666-666666666666",
   "oversize-minimal-kurta": "77777777-7777-7777-7777-777777777777",
   "masters-union-kurta": "88888888-8888-8888-8888-888888888888",
+  "indigo-ikat-short-kurta": "99999999-9999-9999-9999-999999999991",
+  "white-chikankari-short-kurta": "99999999-9999-9999-9999-999999999992",
+  "maroon-polka-block-print-kurta": "99999999-9999-9999-9999-999999999993",
+  "teal-diamond-geometric-kurta": "99999999-9999-9999-9999-999999999994",
+  "rust-ombre-stripe-kurta": "99999999-9999-9999-9999-999999999995",
+  "navy-floral-block-print-kurta": "99999999-9999-9999-9999-999999999996",
 };
 
 export const LEGACY_ID_TO_HANDLE: Record<string, string> = Object.fromEntries(
@@ -35,6 +41,12 @@ export const STYLE_BY_HANDLE: Record<string, string> = {
   "kendrick-statement-kurta": "Block Print",
   "oversize-minimal-kurta": "Minimal",
   "masters-union-kurta": "Block Print",
+  "indigo-ikat-short-kurta": "Block Print",
+  "white-chikankari-short-kurta": "Chikankari",
+  "maroon-polka-block-print-kurta": "Block Print",
+  "teal-diamond-geometric-kurta": "Block Print",
+  "rust-ombre-stripe-kurta": "Minimal",
+  "navy-floral-block-print-kurta": "Block Print",
 };
 
 export async function storefrontApiRequest<T = any>(
