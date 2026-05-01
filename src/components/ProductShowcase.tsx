@@ -17,6 +17,12 @@ import productFormalCollar from "@/assets/product-formal-collar.png";
 import productKendrick from "@/assets/product-kendrick.png";
 import productOversizeGrey from "@/assets/product-oversize-grey.png";
 import productMastersUnion from "@/assets/product-masters-union.png";
+import productIndigoIkat from "@/assets/product-indigo-ikat.jpeg";
+import productWhiteChikankari from "@/assets/product-white-chikankari.jpeg";
+import productMaroonPolka from "@/assets/product-maroon-polka.jpeg";
+import productTealDiamond from "@/assets/product-teal-diamond.jpeg";
+import productRustOmbre from "@/assets/product-rust-ombre.jpeg";
+import productNavyFloral from "@/assets/product-navy-floral.jpeg";
 
 type ProductStyle = "all" | "chikankari" | "block-print" | "embroidered" | "formal" | "minimal";
 
@@ -29,6 +35,12 @@ const imageMap: Record<string, string> = {
   "66666666-6666-6666-6666-666666666666": productKendrick,
   "77777777-7777-7777-7777-777777777777": productOversizeGrey,
   "88888888-8888-8888-8888-888888888888": productMastersUnion,
+  "99999999-9999-9999-9999-999999999991": productIndigoIkat,
+  "99999999-9999-9999-9999-999999999992": productWhiteChikankari,
+  "99999999-9999-9999-9999-999999999993": productMaroonPolka,
+  "99999999-9999-9999-9999-999999999994": productTealDiamond,
+  "99999999-9999-9999-9999-999999999995": productRustOmbre,
+  "99999999-9999-9999-9999-999999999996": productNavyFloral,
 };
 
 // Varying aspect ratios for masonry effect
